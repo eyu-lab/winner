@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>สมัครงานต่างประเทศ | Winner 96</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="job" data-brand="w96">
+  <div id="site-header"></div>
+  <main id="country-page"></main>
+  <div id="site-footer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/jobs-data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    /* Render the country page from JOB_COUNTRIES (js/jobs-data.js) */
+    (function () {
+      const slug = new URLSearchParams(location.search).get("c") || "albania";
+      const c = JOB_COUNTRIES.find((x) => x.slug === slug && x.active);
+      const main = document.getElementById("country-page");
+      const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+
+      if (!c) {
+        main.innerHTML = `<div class="not-found container">
+          <h1 class="page-title">ยังไม่เปิดรับสมัครประเทศนี้</h1>
+          <p class="section-sub">กรุณาเลือกประเทศอื่นที่เปิดรับสมัครอยู่</p>
+          <a href="job.html" class="btn btn-navy" style="margin-top:24px">ดูประเทศทั้งหมด</a></div>`;
+        return;
+      }
+      document.title = `สมัครงานประเทศ${c.nameTh} (${c.nameEn}) | Winner 96`;
+
+      const rows = c.positions.map((p, i) => `
+        <tr class="${p.hot ? "hot" : ""}">
+          <td class="pos">${i + 1}. ${esc(p.th)} (${esc(p.en)})${p.hot ? '<span class="hot-badge">HOT</span>' : ""}</td>
+          <td>${esc(p.gender)}</td>
+          <td>${esc(p.age)}</td>
+          <td class="salary"><b>${esc(p.salary)}</b><small>บาท / เดือน</small></td>
+        </tr>`).join("");
+
+      const benefits = c.benefits.map((b) => `
+        <div class="benefit-card reveal"><span class="b-icon">${ICONS[b.icon] || ICONS.check}</span>
+        <h3>${esc(b.title)}</h3><p>${esc(b.desc)}</p></div>`).join("");
+
+      const posOptions = c.positions.map((p) => `<option>${esc(p.th)} (${esc(p.en)})</option>`).join("");
+      const countryOptions = JOB_COUNTRIES.map((x) =>
+        `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
+
+      main.innerHTML = `
+      <section class="job-hero media" data-img="${c.heroImage}">
+        <div class="container">
+          <div>
+            <span class="legal-badge">${ICONS.star} จัดหางานถูกกฎหมาย 100%</span>
+            <h1>เปิดรับสมัครงาน<span>ประเทศ${esc(c.nameTh)}</span></h1>
+            <p class="lead">${esc(c.lead)}</p>
+            <div class="contact-lines">
+              <a href="tel:${c.phone.replace(/-/g, "")}">${ICONS.phone} ติดต่อสอบถามเพิ่มเติม: ${esc(c.phone)}</a>
+              <a href="mailto:${c.email}">${ICONS.mail} อีเมลยื่นเอกสาร: ${esc(c.email)}</a>
+            </div>
+            <div class="hero-actions">
+              <a href="#apply" class="btn btn-yellow">สมัครงานตอนนี้</a>
+              <a href="#positions" class="btn btn-outline-light">ดูรายละเอียดงาน</a>
+            </div>
+          </div>
+          <div class="flag-circle"><img src="${flagUrl(c.flag, 640)}" alt="ธงชาติ${esc(c.nameTh)}"></div>
+        </div>
+      </section>
+
+      <section id="positions" class="section">
+        <div class="container">
+          <div class="text-center reveal">
+            <span class="eyebrow">Opportunities</span>
+            <h2 class="section-title" style="margin-top:8px">${c.positions.length} ตำแหน่งงานเด่น ประเทศ${esc(c.nameTh)}</h2>
+            <p class="section-sub">ตารางรายละเอียดตำแหน่งงาน เพศ อายุ และเรทอัตราค่าจ้างขั้นต่ำรายเดือน (บาท)</p>
+            <div class="country-select-bar">
+              <label for="cs">เปลี่ยนประเทศ:</label>
+              <select id="cs" class="select-pretty">${countryOptions}</select>
+            </div>
+          </div>
+          <div class="table-card reveal">
+            <div class="table-scroll">
+              <table class="job-table">
+                <thead><tr><th>ตำแหน่งงาน</th><th>เพศ</th><th>ช่วงอายุ</th><th>เงินเดือนโดยประมาณ / เดือน</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+            <div class="table-foot">* อัตราเงินเดือนคำนวณเป็นเงินบาทโดยประมาณ อาจเปลี่ยนแปลงตามอัตราแลกเปลี่ยนและเงื่อนไขของนายจ้าง</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:20px">
+        <div class="container">
+          <div class="text-center reveal">
+            <h2 class="section-title">สิ่งที่คุณจะได้รับจากโครงการ</h2>
+            <span class="title-underline"></span>
+          </div>
+          <div class="benefit-grid two" style="margin-top:44px">${benefits}</div>
+        </div>
+      </section>
+
+      <section id="apply" class="section apply-section">
+        <div class="container">
+          <div class="text-center reveal" style="margin-bottom:40px">
+            <span class="eyebrow">Apply Now</span>
+            <h2 class="section-title" style="margin-top:6px">สมัครงานประเทศ${esc(c.nameTh)}</h2>
+            <p class="section-sub">กรอกข้อมูลเบื้องต้น เจ้าหน้าที่ Winner 96 จะติดต่อกลับเพื่อสัมภาษณ์และแจ้งเอกสารที่ต้องใช้</p>
+          </div>
+          <div class="apply-wrap">
+            <aside class="apply-aside reveal">
+              <h3>ขั้นตอนการสมัคร</h3>
+              <p>ดำเนินการถูกต้องตามกฎหมาย ดูแลครบทุกขั้นตอน</p>
+              <ol class="steps">
+                <li><b>ลงทะเบียนสมัครงาน</b><span>กรอกฟอร์มนี้เพื่อเลือกตำแหน่ง</span></li>
+                <li><b>สัมภาษณ์ &amp; ตรวจสอบคุณสมบัติ</b><span>เจ้าหน้าที่ติดต่อกลับ</span></li>
+                <li><b>ยื่นเอกสาร &amp; ทำวีซ่าทำงาน</b><span>ส่งเอกสารทางอีเมล ${esc(c.email)}</span></li>
+                <li><b>อบรมก่อนเดินทาง &amp; บินไปทำงาน</b><span>มีทีมดูแลตลอดสัญญาจ้าง</span></li>
+              </ol>
+              <div class="aside-contact">
+                <a href="tel:${c.phone.replace(/-/g, "")}">${ICONS.phone} ${esc(c.phone)}</a>
+                <a href="mailto:${c.email}">${ICONS.mail} ${esc(c.email)}</a>
+              </div>
+            </aside>
+            <div class="form-card reveal">
+              <form data-form="job">
+                <input type="hidden" name="ประเทศ" value="${esc(c.nameTh)} (${esc(c.nameEn)})">
+                <h3>ใบสมัครงาน · ${esc(c.nameEn)}</h3>
+                <p class="form-sub">ช่องที่มีเครื่องหมาย <span style="color:#e11d48">*</span> จำเป็นต้องกรอก</p>
+                <div class="form-group-title"><span class="n">1</span>ข้อมูลผู้สมัคร</div>
+                <div class="form-grid">
+                  <div class="field"><label for="j-name">ชื่อ-นามสกุล <span class="req">*</span></label><input id="j-name" name="ชื่อ-นามสกุล" required autocomplete="name"></div>
+                  <div class="field"><span class="label">เพศ <span class="req">*</span></span>
+                    <div class="choice-row">
+                      <label class="choice"><input type="radio" name="เพศ" value="ชาย" required><span>ชาย</span></label>
+                      <label class="choice"><input type="radio" name="เพศ" value="หญิง"><span>หญิง</span></label>
+                    </div>
+                  </div>
+                  <div class="field"><label for="j-age">อายุ (ปี) <span class="req">*</span></label><input id="j-age" type="number" min="18" max="65" name="อายุ" required></div>
+                  <div class="field"><label for="j-passport">หนังสือเดินทาง</label>
+                    <select id="j-passport" name="หนังสือเดินทาง"><option value="">— เลือก —</option><option>มีแล้ว</option><option>ยังไม่มี</option></select>
+                  </div>
+                  <div class="field"><label for="j-tel">เบอร์โทรศัพท์ <span class="req">*</span></label><input id="j-tel" type="tel" name="เบอร์โทร" required inputmode="tel" placeholder="08xxxxxxxx"></div>
+                  <div class="field"><label for="j-line">Line ID</label><input id="j-line" name="Line ID"></div>
+                  <div class="field full"><label for="j-email">อีเมล</label><input id="j-email" type="email" name="อีเมล"></div>
+                </div>
+                <div class="form-group-title"><span class="n">2</span>ตำแหน่งที่สมัคร</div>
+                <div class="form-grid">
+                  <div class="field"><label for="j-pos">ตำแหน่งที่ต้องการ <span class="req">*</span></label>
+                    <select id="j-pos" name="ตำแหน่ง" required><option value="">— เลือกตำแหน่ง —</option>${posOptions}</select>
+                  </div>
+                  <div class="field"><label for="j-exp">ประสบการณ์ในตำแหน่งนี้</label>
+                    <select id="j-exp" name="ประสบการณ์"><option value="">— เลือก —</option><option>ไม่มีประสบการณ์</option><option>น้อยกว่า 1 ปี</option><option>1-3 ปี</option><option>3-5 ปี</option><option>มากกว่า 5 ปี</option></select>
+                  </div>
+                  <div class="field full"><label for="j-msg">รายละเอียดเพิ่มเติม</label><textarea id="j-msg" name="ข้อความเพิ่มเติม" placeholder="เช่น ประสบการณ์ทำงาน ทักษะ หรือคำถาม"></textarea></div>
+                </div>
+                <label class="consent"><input type="checkbox" name="ยินยอม PDPA" value="ยินยอม" required>
+                  <span>ข้าพเจ้ายินยอมให้ Winner 96 Management Manpower Co.,Ltd เก็บและใช้ข้อมูลส่วนบุคคลข้างต้น เพื่อการติดต่อกลับและพิจารณาการสมัครงาน ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล (PDPA)</span></label>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-navy">ส่งใบสมัคร</button>
+                  <span class="form-note">ข้อมูลของคุณจะถูกเก็บเป็นความลับ</span>
+                </div>
+              </form>
+              <div class="form-success" role="status">
+                <div class="ok">${ICONS.check}</div>
+                <h3>ส่งใบสมัครเรียบร้อยแล้ว!</h3>
+                <p>ทีมงาน Winner 96 จะติดต่อกลับโดยเร็วที่สุด<br>สอบถามเพิ่มเติม โทร ${esc(c.phone)}</p>
+                <p class="demo-note" hidden>โหมดทดสอบ: ยังไม่ได้เชื่อม Google Sheets (ดู README.md) — ข้อมูลถูกเก็บไว้ใน browser นี้เท่านั้น</p>
+                <div style="margin-top:20px"><button type="button" class="btn btn-yellow" data-form-again>สมัครอีกตำแหน่ง</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>`;
+
+      document.getElementById("cs").addEventListener("change", (e) => (location.href = `job-country.html?c=${e.target.value}`));
+      if (location.hash) setTimeout(() => document.querySelector(location.hash)?.scrollIntoView(), 50);
+    })();
+  </script>
+  <script src="js/forms.js"></script>
+</body>
+</html>

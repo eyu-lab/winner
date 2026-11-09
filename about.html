@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About Us | Winner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="about" data-brand="none">
+  <div id="site-header"></div>
+  <main>
+    <section class="about-hero">
+      <div class="container">
+        <h1>เกี่ยวกับเรา</h1>
+        <p>Winner คือศูนย์รวมโอกาสฝึกงานและทำงานต่างประเทศ ดำเนินงานโดยสองบริษัทในเครือ ที่ให้บริการอย่างถูกต้องตามกฎหมาย โปร่งใส และดูแลผู้สมัครทุกขั้นตอน</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container brand-grid">
+        <div class="brand-card reveal">
+          <img src="assets/logo-winner-hr.png" alt="Winner HR International">
+          <h3>Winner HR International Co.,Ltd</h3>
+          <p>ที่ปรึกษาโครงการฝึกงานต่างประเทศอย่างถูกกฎหมาย เชื่อมนักศึกษาและบัณฑิตจบใหม่สู่โรงแรมระดับ 4-5 ดาวในประเทศไต้หวัน</p>
+          <ul><li>Internship F&amp;B และ Kitchen</li><li>เบี้ยเลี้ยง 30,000+ บาท/เดือน</li><li>ระยะเวลา 6-12 เดือน พร้อมใบรับรอง</li></ul>
+          <a href="internship.html" class="btn btn-navy">ดูโครงการฝึกงาน</a>
+        </div>
+        <div class="brand-card reveal">
+          <img src="assets/logo-winner96.jpg" alt="Winner 96 Management Manpower">
+          <h3>Winner 96 Management Manpower Co.,Ltd</h3>
+          <p>บริษัทจัดหางานต่างประเทศ ได้รับใบอนุญาตเลขที่ ด.1299/2568 จัดส่งแรงงานไทยไปทำงานต่างประเทศอย่างปลอดภัย ถูกต้องตามกฎหมาย</p>
+          <ul><li>สัญญาจ้างถูกต้องตามกฎหมายแรงงาน</li><li>นายจ้างผ่านการตรวจสอบ</li><li>ดูแลตั้งแต่สมัครจนถึงวันเดินทาง</li></ul>
+          <a href="job.html" class="btn btn-navy">ดูตำแหน่งงานต่างประเทศ</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section" style="padding-top:0">
+      <div class="container">
+        <h2 class="section-title text-center reveal">ติดต่อเรา</h2>
+        <span class="title-underline"></span>
+        <div class="contact-grid" style="margin-top:36px" id="contact-grid"></div>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/jobs-data.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    (function () {
+      const C = WINNER_CONFIG.contact;
+      document.getElementById("contact-grid").innerHTML = `
+        <div class="contact-item reveal"><span class="b-icon">${ICONS.mapPin}</span><h4>ที่อยู่</h4><p>${C.address}</p></div>
+        <div class="contact-item reveal"><span class="b-icon">${ICONS.phone}</span><h4>โทรศัพท์ / Line</h4>
+          <p><a href="tel:${C.hotline}">${C.hotlineDisplay}</a><br><a href="${C.lineUrl}" target="_blank" rel="noopener">Line: ${C.line}</a></p></div>
+        <div class="contact-item reveal"><span class="b-icon">${ICONS.mail}</span><h4>อีเมล</h4><p><a href="mailto:${C.email}">${C.email}</a></p></div>`;
+    })();
+  </script>
+</body>
+</html>
