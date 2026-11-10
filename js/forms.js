@@ -134,28 +134,35 @@
     return { demo: false };
   }
 
-  /* กล่องแนบไฟล์: แสดงชื่อไฟล์ที่เลือก + รองรับลากไฟล์มาวาง */
-  document.querySelectorAll(".file-drop").forEach((drop) => {
+  /* กล่องแนบไฟล์ (ใช้ event delegation จึงรองรับกล่องที่เพิ่มทีหลังด้วย): แสดงชื่อไฟล์ + ลากไฟล์มาวาง */
+  const EMPTY_FILE_TEXT = "เลือกไฟล์ หรือลากไฟล์มาวางที่นี่";
+  function showFile(drop) {
     const input = drop.querySelector('input[type="file"]');
-    const nameEl = drop.querySelector(".file-name");
-    const empty = nameEl.textContent;
-    const show = () => {
-      const f = input.files[0];
-      const size = f && (f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${(f.size / 1048576).toFixed(1)} MB`);
-      nameEl.textContent = f ? `${f.name} (${size})` : empty;
-      drop.classList.toggle("has-file", !!f);
-    };
-    input.addEventListener("change", show);
-    ["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("drag"); }));
-    ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("drag")));
-    drop.addEventListener("drop", (e) => {
-      e.preventDefault();
-      if (input.disabled || !e.dataTransfer.files.length) return;
-      input.files = e.dataTransfer.files;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    });
-    input.form?.addEventListener("reset", () => setTimeout(show));
+    const f = input.files[0];
+    const size = f && (f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${(f.size / 1048576).toFixed(1)} MB`);
+    drop.querySelector(".file-name").textContent = f ? `${f.name} (${size})` : EMPTY_FILE_TEXT;
+    drop.classList.toggle("has-file", !!f);
+  }
+  document.addEventListener("change", (e) => {
+    const drop = e.target.closest?.(".file-drop");
+    if (drop && e.target.type === "file") showFile(drop);
   });
+  ["dragenter", "dragover"].forEach((t) => document.addEventListener(t, (e) => {
+    const drop = e.target.closest?.(".file-drop");
+    if (drop) { e.preventDefault(); drop.classList.add("drag"); }
+  }));
+  document.addEventListener("dragleave", (e) => e.target.closest?.(".file-drop")?.classList.remove("drag"));
+  document.addEventListener("drop", (e) => {
+    const drop = e.target.closest?.(".file-drop");
+    if (!drop) return;
+    e.preventDefault();
+    drop.classList.remove("drag");
+    const input = drop.querySelector('input[type="file"]');
+    if (input.disabled || !e.dataTransfer.files.length) return;
+    input.files = e.dataTransfer.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  document.addEventListener("reset", (e) => setTimeout(() => e.target.querySelectorAll?.(".file-drop").forEach(showFile)), true);
 
   document.querySelectorAll("form[data-form]").forEach((form) => {
     form.noValidate = true;

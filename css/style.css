@@ -799,3 +799,17 @@ i[data-icon] { display: inline-flex; font-style: normal; }
 .file-drop.has-file { border-style: solid; border-color: #22a06b; background: #f0fbf5; }
 .file-drop.has-file .file-ic { background: #22a06b; color: #fff; }
 .field.invalid .file-drop { border-color: #e11d48; }
+
+/* Language test entries (internship) */
+.test-list { display: grid; gap: 12px; }
+.test-entries { display: grid; gap: 12px; }
+.test-entry { padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; animation: mp-in .25s ease; }
+.test-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: var(--navy); }
+.test-remove { border: 0; background: none; color: #e11d48; font: inherit; font-size: 13px; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
+.test-remove:hover { background: #fff1f2; }
+.test-add {
+  justify-self: start; padding: 9px 16px; border: 1.5px dashed #b9c4da; border-radius: 999px; background: #fff;
+  color: var(--navy); font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.test-add:hover { border-color: var(--blue); background: #f3f7ff; }
+.test-add[hidden], .test-remove[hidden] { display: none; }

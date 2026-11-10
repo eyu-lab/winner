@@ -226,7 +226,7 @@
                   <div class="choice-row">
                     <label class="choice"><input type="radio" name="เพศ" value="ชาย" required><span>ชาย</span></label>
                     <label class="choice"><input type="radio" name="เพศ" value="หญิง"><span>หญิง</span></label>
-                    <label class="choice"><input type="radio" name="เพศ" value="LGBTQ"><span>LGBTQ+</span></label>
+                    <label class="choice"><input type="radio" name="เพศ" value="LGBTQ+"><span>LGBTQ+</span></label>
                   </div>
                 </div>
                 <div class="field"><label for="i-dob">วันเกิด <span class="req">*</span></label><input id="i-dob" type="date" name="วันเกิด" required></div>
@@ -235,6 +235,12 @@
                     <option value="">— เลือก —</option><option>มีแล้ว (อายุเหลือมากกว่า 1 ปี)</option><option>มีแล้ว (ใกล้หมดอายุ)</option><option>ยังไม่มี</option>
                   </select>
                 </div>
+                <div class="field"><label for="i-religion">ศาสนา <span class="req">*</span></label>
+                  <select id="i-religion" name="ศาสนา" required>
+                    <option value="">— เลือก —</option><option>พุทธ</option><option>คริสต์</option><option>อิสลาม</option><option>ไม่นับถือศาสนา</option><option>อื่นๆ</option>
+                  </select>
+                </div>
+                <div class="field" data-show-when="ศาสนา=อื่นๆ" hidden><label for="i-religion-other">โปรดระบุศาสนา <span class="req">*</span></label><input id="i-religion-other" name="ศาสนาอื่นๆ (ระบุ)" required disabled></div>
               </div>
 
               <div class="form-group-title"><span class="n">2</span>ช่องทางติดต่อ</div>
@@ -263,6 +269,7 @@
                   <p class="qual-q">นักศึกษามีอายุครบ 18 ปีบริบูรณ์ และอายุสอดคล้องกับระดับการศึกษา <span class="req">*</span></p>
                   <div class="choice-row">
                     <label class="choice"><input type="radio" name="อายุครบ 18 ปี" value="ใช่" required><span>ใช่</span></label>
+
                   </div>
                 </li>
                 <li class="qual-item field">
@@ -297,19 +304,28 @@
                     <label class="choice"><input type="radio" name="ผลสอบภาษา" value="มี" required><span>มี</span></label>
                     <label class="choice"><input type="radio" name="ผลสอบภาษา" value="ไม่มี"><span>ไม่มี</span></label>
                   </div>
-                  <div class="qual-sub form-grid" data-show-when="ผลสอบภาษา=มี" hidden>
-                    <div class="field"><label for="i-test">ผลสอบที่มี <span class="req">*</span></label>
-                      <select id="i-test" name="ประเภทผลสอบภาษา" required disabled>
-                        <option value="">— เลือก —</option><option>TOCFL</option><option>TOEIC (Public Test)</option><option>TOEFL</option><option>IELTS</option><option>อื่นๆ (CEFR)</option>
-                      </select>
-                    </div>
-                    <div class="field full"><span class="label">แนบไฟล์ผลสอบ <span class="req">*</span></span>
-                      <label class="file-drop" for="i-test-file">
-                        <input id="i-test-file" type="file" name="ไฟล์ผลสอบภาษา" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-max-mb="5" required disabled>
-                        <span class="file-ic" data-icon="upload"></span>
-                        <span class="file-text"><b class="file-name">เลือกไฟล์ หรือลากไฟล์มาวางที่นี่</b><small>PDF, JPG หรือ PNG · ขนาดไม่เกิน 5 MB</small></span>
-                      </label>
-                    </div>
+                  <div class="qual-sub test-list" data-show-when="ผลสอบภาษา=มี" hidden>
+                    <template id="test-entry-tpl">
+                      <div class="test-entry">
+                        <div class="test-head"><b>ผลสอบที่ {n}</b><button type="button" class="test-remove">ลบ</button></div>
+                        <div class="form-grid">
+                          <div class="field"><label for="i-test-{n}">ผลสอบที่มี <span class="req">*</span></label>
+                            <select id="i-test-{n}" name="ผลสอบภาษา {n} - ประเภท" required>
+                              <option value="">— เลือก —</option><option>TOCFL</option><option>TOEIC (Public Test)</option><option>TOEFL</option><option>IELTS</option><option>อื่นๆ (CEFR)</option>
+                            </select>
+                          </div>
+                          <div class="field full"><span class="label">แนบไฟล์ผลสอบ <span class="req">*</span></span>
+                            <label class="file-drop" for="i-test-file-{n}">
+                              <input id="i-test-file-{n}" type="file" name="ผลสอบภาษา {n} - ไฟล์" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-max-mb="5" required>
+                              <span class="file-ic" data-icon="upload"></span>
+                              <span class="file-text"><b class="file-name">เลือกไฟล์ หรือลากไฟล์มาวางที่นี่</b><small>PDF, JPG หรือ PNG · ขนาดไม่เกิน 5 MB</small></span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                    <div class="test-entries"></div>
+                    <button type="button" class="test-add">+ เพิ่มผลสอบอีก 1 รายการ</button>
                   </div>
                   <div class="qual-advice" data-show-when="ผลสอบภาษา=ไม่มี" hidden role="status">
                     <span class="mp-warning-ic">i</span>
@@ -369,6 +385,9 @@
                 <div class="field"><label for="i-source">รู้จักเราจากช่องทางใด</label>
                   <select id="i-source" name="รู้จักเราจาก"><option value="">— เลือก —</option><option>Facebook</option><option>TikTok</option><option>Instagram</option><option>Line</option><option>อาจารย์ / มหาวิทยาลัย</option><option>เพื่อนแนะนำ</option><option>อื่นๆ</option></select>
                 </div>
+                <div class="field" data-show-when="รู้จักเราจาก=อื่นๆ" hidden><label for="i-religion-other">โปรดระบุ </label><input id="i-religion-other" name="รู้จักเราจาก (ระบุ)" required disabled>
+                </div>
+
                 <div class="field full"><label for="i-msg">คำถามหรือข้อมูลเพิ่มเติม</label><textarea id="i-msg" name="ข้อความเพิ่มเติม" placeholder="เช่น ประสบการณ์ทำงาน/ฝึกงานที่ผ่านมา หรือคำถามที่อยากถาม"></textarea></div>
               </div>
 
@@ -537,12 +556,40 @@
         const blocks = [...form.querySelectorAll("[data-show-when]")];
         const sync = () => blocks.forEach((b) => {
           const [name, value] = b.dataset.showWhen.split("=");
-          const on = form.querySelector(`input[name="${name}"]:checked`)?.value === value;
+          const ctl = form.querySelector(`[name="${name}"]`);
+          const cur = ctl?.type === "radio" ? form.querySelector(`input[name="${name}"]:checked`)?.value : ctl?.value;
+          const on = cur === value;
           b.hidden = !on;
           b.querySelectorAll("input, select, textarea").forEach((el) => (el.disabled = !on));
         });
-        form.addEventListener("change", (e) => { if (e.target.type === "radio") sync(); });
-        form.addEventListener("reset", () => setTimeout(sync));
+        form.addEventListener("change", (e) => { if (e.target.type === "radio" || e.target.tagName === "SELECT") sync(); });
+
+        /* ผลสอบภาษา: รายการที่ 1 บังคับ (เลือกผลสอบ + แนบไฟล์), เพิ่มรายการที่ 2 ได้ถ้ามีทั้งภาษาจีนและอังกฤษ */
+        const MAX_TESTS = 2;
+        const tpl = document.getElementById("test-entry-tpl");
+        const list = form.querySelector(".test-entries");
+        const addBtn = form.querySelector(".test-add");
+        const addTest = () => {
+          const n = list.children.length + 1;
+          const wrap = document.createElement("div");
+          wrap.innerHTML = tpl.innerHTML.replaceAll("{n}", n);
+          const entry = wrap.firstElementChild;
+          entry.querySelector(".file-ic").innerHTML = ICONS.upload;
+          entry.querySelector(".test-remove").hidden = n === 1;
+          list.appendChild(entry);
+          addBtn.hidden = list.children.length >= MAX_TESTS;
+          return entry;
+        };
+        addBtn.addEventListener("click", () => addTest().querySelector("select").focus());
+        list.addEventListener("click", (e) => {
+          if (!e.target.closest(".test-remove")) return;
+          e.target.closest(".test-entry").remove();
+          addBtn.hidden = list.children.length >= MAX_TESTS;
+        });
+        const resetTests = () => { list.innerHTML = ""; addTest(); };
+
+        form.addEventListener("reset", () => setTimeout(() => { resetTests(); sync(); }));
+        resetTests();
         sync();
       })();
 
