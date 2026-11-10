@@ -52,7 +52,6 @@
             <div class="p-stats">
               <div>ระยะเวลา<b style="color:#1e1b4b">6-12</b>เดือน</div>
               <div>พร้อมเบี้ยเลี้ยง<b>29,500</b>TWD/เดือน</div>
-              <div>รับ Cer.<b style="color:#1e1b4b;font-size:14px">เมื่อฝึกงานครบ</b></div>
             </div>
           </div>
         </div>
@@ -112,7 +111,6 @@
           <h2 class="section-title" style="margin-top:6px">ตำแหน่งที่เปิดรับสมัคร</h2>
           <span class="title-underline"></span>
         </div>
-        <p class="section-sub reveal" style="text-align:center">วางเมาส์หรือแตะที่รูปเพื่อดูรายละเอียดแต่ละตำแหน่ง</p>
         <!-- Image gallery: ใส่รูปที่ assets/images/pos-*.jpg (แนะนำแนวตั้ง 900×1000) -->
         <div class="pos-gallery reveal">
           <article class="pos-panel media pp-front" data-img="assets/images/pos-front-office.jpg" tabindex="0">
@@ -275,7 +273,26 @@
                     <option value="">— เลือก —</option><option>6 เดือน</option><option>12 เดือน</option><option>ยังไม่แน่ใจ</option>
                   </select>
                 </div>
-                <div class="field"><label for="i-start">ช่วงเวลาที่พร้อมเดินทาง</label><input id="i-start" type="month" name="พร้อมเดินทาง"></div>
+                <div class="field mp-field"><label for="i-start">ช่วงเวลาฝึกงาน (เดือนที่เริ่ม)</label>
+                  <input type="hidden" id="i-start-val" name="ช่วงเวลาฝึกงาน">
+                  <button type="button" id="i-start" class="mp-trigger" aria-haspopup="dialog" aria-expanded="false">
+                    <span class="mp-text">— เลือกเดือน —</span><span class="mp-ic" data-icon="calendar"></span>
+                  </button>
+                  <div class="mp-pop" role="dialog" aria-label="เลือกเดือนที่เริ่มฝึกงาน" hidden>
+                    <div class="mp-head">
+                      <button type="button" class="mp-nav" data-step="-1" aria-label="ปีก่อนหน้า">‹</button>
+                      <b class="mp-year"></b>
+                      <button type="button" class="mp-nav" data-step="1" aria-label="ปีถัดไป">›</button>
+                    </div>
+                    <div class="mp-grid"></div>
+                    <div class="mp-legend"><span class="mp-sw"></span>ภายใน 3 เดือน อาจเตรียมการไม่ทัน</div>
+                  </div>
+                  <span class="mp-range" hidden></span>
+                </div>
+                <div class="field full mp-warning" role="alert" hidden>
+                  <span class="mp-warning-ic">!</span>
+                  <p>เนื่องจากการฝึกงานต้องมีการเตรียมการล่วงหน้า 3 เดือน ช่วงเวลาที่เลือกนั้นอาจทำให้เตรียมการไม่ทัน แต่คุณยังสามารถส่งใบสมัครได้เพื่อให้เราได้รับข้อมูลและแจ้งเตือนในอนาคตได้</p>
+                </div>
                 <div class="field"><label for="i-en">ระดับภาษาอังกฤษ</label>
                   <select id="i-en" name="ภาษาอังกฤษ"><option value="">— เลือก —</option><option>พื้นฐาน</option><option>สื่อสารได้</option><option>ดี</option><option>ดีมาก</option></select>
                 </div>
@@ -301,7 +318,6 @@
               <div class="ok" data-icon="check"></div>
               <h3>ส่งข้อมูลเรียบร้อยแล้ว!</h3>
               <p>ขอบคุณที่สนใจโครงการฝึกงานไต้หวัน ทีมงานจะติดต่อกลับภายใน 1-2 วันทำการ<br>หากต้องการคำตอบเร็วขึ้น ทัก Line: <b>@winnerhr</b></p>
-              <p class="demo-note" hidden>โหมดทดสอบ: ยังไม่ได้เชื่อม Google Sheets (ดู README.md) — ข้อมูลถูกเก็บไว้ใน browser นี้เท่านั้น</p>
               <div style="margin-top:20px"><button type="button" class="btn btn-yellow" data-form-again>ลงทะเบียนอีกครั้ง</button></div>
             </div>
           </div>
@@ -369,6 +385,83 @@
         clearTimeout(hoverTimer);
         hoverTimer = setTimeout(() => { if (!gallery.querySelector(":focus-visible")) setActive(null); }, 120);
       });
+
+      /* ปฏิทินเลือกเดือนเริ่มฝึกงาน: ต้องเตรียมการล่วงหน้า 3 เดือน
+         เดือนที่ห่างจากเดือนปัจจุบันไม่เกิน 3 เดือนจะถูกไฮไลต์ และแจ้งเตือนเมื่อเลือก (ยังส่งใบสมัครได้) */
+      (function monthPicker() {
+        const LEAD = 3;
+        const field = document.querySelector(".mp-field");
+        const trigger = field.querySelector(".mp-trigger");
+        const text = field.querySelector(".mp-text");
+        const pop = field.querySelector(".mp-pop");
+        const grid = field.querySelector(".mp-grid");
+        const yearEl = field.querySelector(".mp-year");
+        const hidden = document.getElementById("i-start-val");
+        const range = field.querySelector(".mp-range");
+        const warning = document.querySelector(".mp-warning");
+        const duration = document.getElementById("i-duration");
+        const form = field.closest("form");
+
+        const now = new Date();
+        const nowIdx = now.getFullYear() * 12 + now.getMonth(); // เดือนปัจจุบันเป็นเลขลำดับ
+        const minYear = now.getFullYear(), maxYear = minYear + 2;
+        const label = (idx, month = "long") =>
+          new Date(Math.floor(idx / 12), idx % 12, 1).toLocaleDateString("th-TH", { month, year: "numeric" });
+        const shortMonth = (m) => new Date(2000, m, 1).toLocaleDateString("th-TH", { month: "short" });
+        const isSoon = (idx) => idx - nowIdx <= LEAD;
+
+        let selected = null, viewYear = minYear;
+
+        function render() {
+          yearEl.textContent = `${viewYear + 543} (${viewYear})`;
+          pop.querySelector('[data-step="-1"]').disabled = viewYear <= minYear;
+          pop.querySelector('[data-step="1"]').disabled = viewYear >= maxYear;
+          grid.innerHTML = Array.from({ length: 12 }, (_, m) => {
+            const idx = viewYear * 12 + m;
+            const past = idx < nowIdx;
+            const cls = ["mp-month", !past && isSoon(idx) ? "soon" : "", idx === selected ? "on" : "", idx === nowIdx ? "now" : ""].join(" ");
+            return `<button type="button" class="${cls}" data-idx="${idx}" ${past ? "disabled" : ""}
+              ${!past && isSoon(idx) ? 'title="ภายใน 3 เดือน อาจเตรียมการไม่ทัน"' : ""}>${shortMonth(m)}</button>`;
+          }).join("");
+        }
+
+        function update() {
+          const has = selected !== null;
+          const soon = has && isSoon(selected);
+          text.textContent = has ? label(selected) : "— เลือกเดือน —";
+          trigger.classList.toggle("filled", has);
+          trigger.classList.toggle("soon", soon);
+          hidden.value = has
+            ? `${label(selected)} (${Math.floor(selected / 12)}-${String(selected % 12 + 1).padStart(2, "0")})${soon ? " ⚠ เตรียมการน้อยกว่า 3 เดือน" : ""}`
+            : "";
+          warning.hidden = !soon;
+          const months = parseInt(duration.value, 10);
+          range.hidden = !(has && months);
+          if (has && months) range.textContent = `ฝึกงานประมาณ ${label(selected, "short")} – ${label(selected + months - 1, "short")}`;
+        }
+
+        const open = () => {
+          viewYear = selected !== null ? Math.floor(selected / 12) : minYear;
+          render(); pop.hidden = false; trigger.setAttribute("aria-expanded", "true");
+          (grid.querySelector(".on") || grid.querySelector(".mp-month:not(:disabled)")).focus();
+        };
+        const close = (refocus) => {
+          pop.hidden = true; trigger.setAttribute("aria-expanded", "false");
+          if (refocus) trigger.focus();
+        };
+
+        trigger.addEventListener("click", () => (pop.hidden ? open() : close()));
+        pop.addEventListener("click", (e) => {
+          const nav = e.target.closest(".mp-nav");
+          if (nav) { viewYear += +nav.dataset.step; render(); return; }
+          const btn = e.target.closest(".mp-month");
+          if (btn && !btn.disabled) { selected = +btn.dataset.idx; update(); close(true); }
+        });
+        document.addEventListener("click", (e) => { if (!pop.hidden && !field.contains(e.target)) close(); });
+        field.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) { e.preventDefault(); close(true); } });
+        duration.addEventListener("change", update);
+        form.addEventListener("reset", () => setTimeout(() => { selected = null; update(); }));
+      })();
 
       /* "สมัครตำแหน่งนี้" → ติ๊กตำแหน่งนั้นในฟอร์มให้อัตโนมัติ */
       document.querySelectorAll(".pos-apply").forEach((a) =>
