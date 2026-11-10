@@ -37,7 +37,16 @@
     check: p('<path d="M20 6 9 17l-5-5"/>'),
     star: p('<polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/>'),
     arrowRight: p('<path d="M5 12h14M12 5l7 7-7 7"/>'),
-    mapPin: p('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>')
+    mapPin: p('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'),
+    bell: p('<path d="M3 20h18M5 20a7 7 0 0 1 14 0M12 9V7M10 7h4"/>'),
+    bed: p('<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>'),
+    chefHat: p('<path d="M17 21a1 1 0 0 0 1-1v-5.4a1 1 0 0 1 .6-.9A4 4 0 0 0 16.3 6 4 4 0 0 0 12 3a4 4 0 0 0-4.3 3 4 4 0 0 0-2.3 7.7 1 1 0 0 1 .6.9V20a1 1 0 0 0 1 1zM6 17h12"/>'),
+    wine: p('<path d="M8 22h8M7 10h10M12 15v7M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5z"/>'),
+    tray: p('<path d="M2 18h20M4 18a8 8 0 0 1 16 0M12 10V8"/><circle cx="12" cy="7" r="1"/><path d="M20 22H4"/>'),
+    calendar: p('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>'),
+    clock: p('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+    moon: p('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>'),
+    wallet: p('<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>')
   };
   window.ICONS = ICONS;
 
@@ -96,7 +105,35 @@
   </header>`;
 
   /* ---------- CTA band + Footer ---------- */
-  const footer = `
+  /* ---------- Licence card (Winner 96 / Job pages only) ---------- */
+  const LICENCE = {
+    title: "บริษัทจัดหางานที่ได้รับอนุญาตถูกต้องตามกฎหมาย",
+    desc: "Winner 96 Management Manpower Co.,Ltd ได้รับใบอนุญาตจัดหางานเพื่อไปทำงานต่างประเทศ ตรวจสอบข้อมูลบริษัทได้ก่อนตัดสินใจสมัครงาน",
+    items: [
+      { value: "ต.1299/2568", label: "ใบอนุญาตจัดหางานให้คนหางานเพื่อไปทำงานต่างประเทศ" },
+      { value: "Accredited List", label: "Overseas Manpower Recruitment Agency" },
+      { value: "W-12", label: "Organization · วันที่ 20260604" }
+    ]
+  };
+  const applyHref = page === "job" && document.getElementById("country-page") ? "#apply" : "job.html#country-grid";
+  const licenceCard = brand !== "w96" ? "" : `
+  <section class="licence-section">
+    <div class="container">
+      <div class="licence-card">
+        <span class="licence-check">${ICONS.check}</span>
+        <div class="licence-text">
+          <h2>${LICENCE.title}</h2>
+          <p>${LICENCE.desc}</p>
+          <a href="${applyHref}">สอบถาม / สมัครงานกับเรา →</a>
+        </div>
+        <div class="licence-items">
+          ${LICENCE.items.map((i) => `<div class="licence-item"><b>${i.value}</b><span>${i.label}</span></div>`).join("")}
+        </div>
+      </div>
+    </div>
+  </section>`;
+
+  const footer = `${licenceCard}
   <section class="cta-band">
     <div class="container">
       <h2>Winner HR International | เปิดประตูสู่อนาคตที่มั่นคง<br>
