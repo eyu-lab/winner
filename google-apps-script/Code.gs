@@ -13,6 +13,12 @@
  * ข้อมูลจะแยกเป็น 2 แท็บอัตโนมัติ: "Internship" และ "Job"
  * หัวคอลัมน์จะสร้างเองตามชื่อช่องในฟอร์ม (เพิ่มช่องใหม่ในฟอร์มได้เลย ไม่ต้องแก้สคริปต์)
  *
+ * ไฟล์แนบ (เช่น ผลสอบภาษา) จะถูกเก็บในโฟลเดอร์ "Winner - ไฟล์แนบผู้สมัคร" ใน Google Drive
+ * และในชีตจะเป็นลิงก์ไปยังไฟล์
+ *
+ * ⚠ เมื่อแก้โค้ดนี้แล้ว ต้อง Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy
+ *   (URL เดิมยังใช้ได้) — ก่อน deploy ให้เลือกฟังก์ชัน authorizeDrive แล้วกด Run 1 ครั้งเพื่ออนุญาตสิทธิ์ Google Drive
+ *
  * (ไม่บังคับ) ใส่อีเมลใน NOTIFY_EMAIL เพื่อรับแจ้งเตือนทุกครั้งที่มีคนสมัคร
  */
 const NOTIFY_EMAIL = ""; // เช่น "winner96mp@gmail.com"
@@ -26,6 +32,7 @@ function doPost(e) {
     const data = Object.assign({}, e.parameter);
     const type = data.formType || "other";
     delete data.formType;
+    saveUploads(data);
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const name = SHEET_NAMES[type] || "Other";
@@ -58,6 +65,43 @@ function doPost(e) {
   }
 }
 
+/**
+ * ไฟล์แนบจากเว็บ (เช่น ไฟล์ผลสอบภาษา) มาในช่อง "_file:<ชื่อช่อง>" เป็น JSON {name, type, data(base64)}
+ * บันทึกลงโฟลเดอร์ UPLOAD_FOLDER ใน Google Drive ของเจ้าของสคริปต์ แล้วแทนค่าช่องนั้นด้วยลิงก์ไฟล์
+ * ไฟล์เป็นแบบส่วนตัว (เปิดได้เฉพาะเจ้าของ Drive / คนที่แชร์โฟลเดอร์ให้)
+ */
+const UPLOAD_FOLDER = "Winner - ไฟล์แนบผู้สมัคร";
+const MAX_UPLOAD_MB = 5;
+
+function saveUploads(data) {
+  Object.keys(data).forEach(function (key) {
+    if (key.indexOf("_file:") !== 0) return;
+    const field = key.slice(6);
+    try {
+      const f = JSON.parse(data[key]);
+      const bytes = Utilities.base64Decode(f.data);
+      if (bytes.length > MAX_UPLOAD_MB * 1024 * 1024) throw new Error("ไฟล์ใหญ่เกิน " + MAX_UPLOAD_MB + " MB");
+      const who = data["ชื่อ-นามสกุล (อังกฤษ)"] || data["ชื่อ-นามสกุล (ไทย)"] || data["ชื่อ-นามสกุล"] || "applicant";
+      const stamp = Utilities.formatDate(new Date(), "Asia/Bangkok", "yyyyMMdd-HHmmss");
+      const blob = Utilities.newBlob(bytes, f.type, stamp + "_" + who + "_" + f.name);
+      data[field] = getUploadFolder().createFile(blob).getUrl();
+    } catch (err) {
+      data[field] = "อัปโหลดไม่สำเร็จ: " + err;
+    }
+    delete data[key];
+  });
+}
+
+function getUploadFolder() {
+  const it = DriveApp.getFoldersByName(UPLOAD_FOLDER);
+  return it.hasNext() ? it.next() : DriveApp.createFolder(UPLOAD_FOLDER);
+}
+
 function doGet() {
   return ContentService.createTextOutput("Winner form endpoint is running.");
+}
+
+/** รันฟังก์ชันนี้ 1 ครั้งในหน้า Apps Script (เลือก authorizeDrive → Run) เพื่ออนุญาตสิทธิ์ Google Drive */
+function authorizeDrive() {
+  Logger.log("Upload folder: " + getUploadFolder().getUrl());
 }

@@ -43,6 +43,19 @@
         }
         return;
       }
+      if (el.type === "file") {
+        const file = el.files[0];
+        if (el.required && !file) {
+          setInvalid(el, "กรุณาแนบไฟล์");
+          firstBad = firstBad || el;
+        } else if (file) {
+          const max = parseFloat(el.dataset.maxMb || "5");
+          const okType = /\.(pdf|jpe?g|png)$/i.test(file.name);
+          if (!okType) { setInvalid(el, "รองรับเฉพาะไฟล์ PDF, JPG หรือ PNG"); firstBad = firstBad || el; }
+          else if (file.size > max * 1024 * 1024) { setInvalid(el, `ไฟล์ใหญ่เกิน ${max} MB กรุณาลดขนาดไฟล์`); firstBad = firstBad || el; }
+        }
+        return;
+      }
       const v = (el.value || "").trim();
       if (el.required && !v) {
         setInvalid(el, "กรุณากรอกข้อมูลช่องนี้");
@@ -69,10 +82,25 @@
     return true;
   }
 
-  function collect(form) {
+  const readBase64 = (file) => new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(",")[1] || "");
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
+
+  /* ไฟล์แนบ: ส่งเป็น base64 ในช่อง "_file:<ชื่อช่อง>" → Apps Script บันทึกลง Google Drive แล้วใส่ลิงก์ในชีต */
+  async function collect(form) {
     const data = {};
+    for (const el of form.querySelectorAll('input[type="file"]')) {
+      const file = !el.disabled && el.files[0];
+      if (!file) continue;
+      data[el.name] = file.name;
+      data["_file:" + el.name] = JSON.stringify({ name: file.name, type: file.type || "application/octet-stream", data: await readBase64(file) });
+    }
     new FormData(form).forEach((value, key) => {
-      value = typeof value === "string" ? value.trim() : value;
+      if (typeof value !== "string") return; // ไฟล์จัดการด้านบนแล้ว
+      value = value.trim();
       data[key] = data[key] ? `${data[key]}, ${value}` : value;
     });
     data["วันที่ส่ง"] = new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
@@ -87,7 +115,9 @@
       try {
         const key = "winner_submissions";
         const list = JSON.parse(localStorage.getItem(key) || "[]");
-        list.push(data);
+        const slim = {};
+        Object.keys(data).forEach((k) => { if (!k.startsWith("_file:")) slim[k] = data[k]; }); // ไม่เก็บไฟล์ใน browser
+        list.push(slim);
         localStorage.setItem(key, JSON.stringify(list));
       } catch (_) { /* storage blocked */ }
       console.info("[Winner form · demo mode] ยังไม่ได้ตั้งค่า formEndpoint ใน js/config.js", data);
@@ -104,6 +134,29 @@
     return { demo: false };
   }
 
+  /* กล่องแนบไฟล์: แสดงชื่อไฟล์ที่เลือก + รองรับลากไฟล์มาวาง */
+  document.querySelectorAll(".file-drop").forEach((drop) => {
+    const input = drop.querySelector('input[type="file"]');
+    const nameEl = drop.querySelector(".file-name");
+    const empty = nameEl.textContent;
+    const show = () => {
+      const f = input.files[0];
+      const size = f && (f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${(f.size / 1048576).toFixed(1)} MB`);
+      nameEl.textContent = f ? `${f.name} (${size})` : empty;
+      drop.classList.toggle("has-file", !!f);
+    };
+    input.addEventListener("change", show);
+    ["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("drag"); }));
+    ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("drag")));
+    drop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      if (input.disabled || !e.dataTransfer.files.length) return;
+      input.files = e.dataTransfer.files;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    input.form?.addEventListener("reset", () => setTimeout(show));
+  });
+
   document.querySelectorAll("form[data-form]").forEach((form) => {
     form.noValidate = true;
     form.addEventListener("input", (e) => clearInvalid(e.target));
@@ -117,7 +170,7 @@
       btn.disabled = true;
       btn.textContent = "กำลังส่งข้อมูล...";
       try {
-        const res = await send(collect(form));
+        const res = await send(await collect(form));
         const card = form.closest(".form-card");
         card.classList.add("done");
         const note = card.querySelector(".demo-note");

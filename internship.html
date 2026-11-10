@@ -226,7 +226,7 @@
                   <div class="choice-row">
                     <label class="choice"><input type="radio" name="เพศ" value="ชาย" required><span>ชาย</span></label>
                     <label class="choice"><input type="radio" name="เพศ" value="หญิง"><span>หญิง</span></label>
-                    <label class="choice"><input type="radio" name="เพศ" value="ไม่ระบุ"><span>ไม่ระบุ</span></label>
+                    <label class="choice"><input type="radio" name="เพศ" value="LGBTQ"><span>LGBTQ+</span></label>
                   </div>
                 </div>
                 <div class="field"><label for="i-dob">วันเกิด <span class="req">*</span></label><input id="i-dob" type="date" name="วันเกิด" required></div>
@@ -257,7 +257,74 @@
                 <div class="field"><label for="i-gpa">เกรดเฉลี่ย (GPAX)</label><input id="i-gpa" name="GPAX" inputmode="decimal" placeholder="เช่น 3.25"></div>
               </div>
 
-              <div class="form-group-title"><span class="n">4</span>โปรแกรมที่สนใจ</div>
+              <div class="form-group-title"><span class="n">4</span>ตรวจสอบคุณสมบัติผู้สมัคร</div>
+              <ol class="qual-list">
+                <li class="qual-item field">
+                  <p class="qual-q">นักศึกษามีอายุครบ 18 ปีบริบูรณ์ และอายุสอดคล้องกับระดับการศึกษา <span class="req">*</span></p>
+                  <div class="choice-row">
+                    <label class="choice"><input type="radio" name="อายุครบ 18 ปี" value="ใช่" required><span>ใช่</span></label>
+                  </div>
+                </li>
+                <li class="qual-item field">
+                  <p class="qual-q">หลักสูตรที่ศึกษา <span class="req">*</span></p>
+                  <div class="choice-row">
+                    <label class="choice"><input type="radio" name="หลักสูตร" value="หลักสูตรปกติ" required><span>หลักสูตรปกติ</span></label>
+                    <label class="choice"><input type="radio" name="หลักสูตร" value="หลักสูตรนานาชาติ"><span>หลักสูตรนานาชาติ</span></label>
+                  </div>
+                </li>
+                <li class="qual-item field">
+                  <p class="qual-q">สาขาที่เรียน <span class="req">*</span></p>
+                  <div class="choice-row">
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="การท่องเที่ยว" required><span>การท่องเที่ยว</span></label>
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="การโรงแรม"><span>การโรงแรม</span></label>
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="อาหารและเครื่องดื่ม"><span>อาหารและเครื่องดื่ม</span></label>
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="การกีฬาและนันทนาการ"><span>การกีฬาและนันทนาการ</span></label>
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="คหกรรมศาสตร์"><span>คหกรรมศาสตร์</span></label>
+                    <label class="choice"><input type="radio" name="สาขาที่เรียน" value="อุตสาหกรรมบริการอื่นๆ"><span>อุตสาหกรรมบริการอื่นๆ ที่เกี่ยวข้อง</span></label>
+                  </div>
+                  <div class="qual-sub field" data-show-when="สาขาที่เรียน=อุตสาหกรรมบริการอื่นๆ" hidden>
+                    <label for="i-major-other">โปรดระบุสาขา <span class="req">*</span></label>
+                    <input id="i-major-other" name="สาขาอื่นๆ (ระบุ)" required disabled placeholder="เช่น การจัดการธุรกิจการบิน">
+                  </div>
+                </li>
+                <li class="qual-item field">
+                  <p class="qual-q">มีผลทดสอบวัดระดับภาษาที่ยังไม่หมดอายุ อย่างใดอย่างหนึ่ง <span class="req">*</span></p>
+                  <ul class="qual-notes">
+                    <li>ผลสอบภาษาจีนไต้หวัน (จีนกลาง) TOCFL ระดับ 2 หรือ</li>
+                    <li>ผลสอบภาษาอังกฤษมาตรฐาน CEFR เทียบเท่าระดับ A2 เช่น TOEIC (Public Test), TOEFL หรือ IELTS</li>
+                  </ul>
+                  <div class="choice-row">
+                    <label class="choice"><input type="radio" name="ผลสอบภาษา" value="มี" required><span>มี</span></label>
+                    <label class="choice"><input type="radio" name="ผลสอบภาษา" value="ไม่มี"><span>ไม่มี</span></label>
+                  </div>
+                  <div class="qual-sub form-grid" data-show-when="ผลสอบภาษา=มี" hidden>
+                    <div class="field"><label for="i-test">ผลสอบที่มี <span class="req">*</span></label>
+                      <select id="i-test" name="ประเภทผลสอบภาษา" required disabled>
+                        <option value="">— เลือก —</option><option>TOCFL</option><option>TOEIC (Public Test)</option><option>TOEFL</option><option>IELTS</option><option>อื่นๆ (CEFR)</option>
+                      </select>
+                    </div>
+                    <div class="field full"><span class="label">แนบไฟล์ผลสอบ <span class="req">*</span></span>
+                      <label class="file-drop" for="i-test-file">
+                        <input id="i-test-file" type="file" name="ไฟล์ผลสอบภาษา" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-max-mb="5" required disabled>
+                        <span class="file-ic" data-icon="upload"></span>
+                        <span class="file-text"><b class="file-name">เลือกไฟล์ หรือลากไฟล์มาวางที่นี่</b><small>PDF, JPG หรือ PNG · ขนาดไม่เกิน 5 MB</small></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="qual-advice" data-show-when="ผลสอบภาษา=ไม่มี" hidden role="status">
+                    <span class="mp-warning-ic">i</span>
+                    <div>
+                      <p><b>แนะนำสถานที่สอบวัดระดับภาษา</b> (ยังสามารถส่งใบสมัครได้ แล้วยื่นผลสอบภายหลัง)</p>
+                      <p><b>TOCFL</b> · ศูนย์แนะแนวการศึกษาไต้หวัน ประจำประเทศไทย (Taiwan Education Center, Thailand)<br>
+                        โทร <a href="tel:0801149041">080-114-9041</a></p>
+                      <p><b>TOEIC Public Test</b> · CPA Call Center Bangkok<br>
+                        โทร <a href="tel:022607061">02-260-7061</a>, <a href="tel:022593990">02-259-3990</a> ต่อ 101 หรือ 108 (English language)</p>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="form-group-title"><span class="n">5</span>โปรแกรมที่สนใจ</div>
               <div class="form-grid">
                 <div class="field full"><span class="label">ตำแหน่งที่สนใจ <span class="req">*</span></span>
                   <div class="choice-row">
@@ -461,6 +528,22 @@
         field.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) { e.preventDefault(); close(true); } });
         duration.addEventListener("change", update);
         form.addEventListener("reset", () => setTimeout(() => { selected = null; update(); }));
+      })();
+
+      /* เช็กลิสต์คุณสมบัติ: แสดงช่องย่อยตามคำตอบ (data-show-when="ชื่อ=ค่า")
+         ช่องที่ซ่อนอยู่จะถูก disabled จึงไม่ถูกตรวจและไม่ถูกส่ง */
+      (function qualChecklist() {
+        const form = document.querySelector('form[data-form="internship"]');
+        const blocks = [...form.querySelectorAll("[data-show-when]")];
+        const sync = () => blocks.forEach((b) => {
+          const [name, value] = b.dataset.showWhen.split("=");
+          const on = form.querySelector(`input[name="${name}"]:checked`)?.value === value;
+          b.hidden = !on;
+          b.querySelectorAll("input, select, textarea").forEach((el) => (el.disabled = !on));
+        });
+        form.addEventListener("change", (e) => { if (e.target.type === "radio") sync(); });
+        form.addEventListener("reset", () => setTimeout(sync));
+        sync();
       })();
 
       /* "สมัครตำแหน่งนี้" → ติ๊กตำแหน่งนั้นในฟอร์มให้อัตโนมัติ */
