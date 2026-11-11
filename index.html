@@ -14,12 +14,9 @@
   <div id="site-header"></div>
 
   <main>
-    <!-- ===== Hero carousel =====
-         ใส่รูป banner ที่ assets/images/banner-home-1.jpg, -2.jpg, -3.jpg (แนะนำ 1440×560)
-         เมื่อมีรูป ข้อความ fallback ในสไลด์นั้นจะถูกซ่อนอัตโนมัติ -->
     <section class="hero-carousel" aria-label="แบนเนอร์">
       <div class="slides">
-        <div class="slide media ph-hr" data-img="assets/images/banner-home-1.jpg">
+        <div class="slide media ph-hr" data-img="assets/images/banner-home-1.png">
           <div class="slide-content fallback-only">
             <div class="banner-logo-text">WINNER HR INTERNATIONAL</div>
             <div class="banner-title-hr">ฝึกงาน<span>ต่างประเทศ</span></div>
@@ -39,12 +36,7 @@
             <p style="margin-top:10px;opacity:.85">เชื่อมต่อคนไทย สู่โอกาสการทำงานในต่างประเทศ · เดินทางปลอดภัย มั่นใจ ถูกกฎหมาย</p>
           </div>
         </div>
-        <div class="slide media" data-img="assets/images/banner-home-3.jpg" style="--ph:linear-gradient(120deg,#fdf2f4,#f6dfe6 60%,#e9c9d3)">
-          <div class="slide-content fallback-only" style="align-items:center;text-align:center;color:#8a1538">
-            <div style="font-size:clamp(28px,5vw,64px);font-weight:700">Winner</div>
-            <p style="color:#6b2a3c">ฝึกงาน · ทำงาน · ต่างประเทศ อย่างถูกต้องตามกฎหมาย</p>
-          </div>
-        </div>
+        <!-- เพิ่มสไลด์ที่ 3: คัดลอกบล็อกด้านบน แล้วเปลี่ยน data-img เป็น assets/images/banner-home-3.jpg -->
       </div>
       <button class="carousel-btn prev" aria-label="สไลด์ก่อนหน้า" data-icon="chevLeft"></button>
       <button class="carousel-btn next" aria-label="สไลด์ถัดไป" data-icon="chevRight"></button>
@@ -74,85 +66,6 @@
         </a>
       </div>
     </section>
-
-    <!-- ===== Program Highlights ===== -->
-    <section class="section">
-      <div class="container">
-        <div class="text-center reveal">
-          <h2 class="section-title" style="font-weight:500;font-size:clamp(20px,2.2vw,26px)">Program Highlights: Taiwan Internships</h2>
-          <p class="section-sub">โครงการฝึกงาน เปิดรับสมัครผู้ที่ยังเป็นนักศึกษา  เพื่อเสริมสร้างประสบการณ์จริงผ่านการฝึกงาน พร้อมรับเงินสนับสนุนค่าครองชีพรายเดือน</p>
-        </div>
-        <div class="highlight-grid" style="margin-top:40px">
-          <div class="poster media reveal" data-img="assets/images/taiwan-fnb-poster.jpg">
-            <div class="poster-fallback fallback-only">
-              <div>
-                <div style="color:#7c3aed;font-style:italic;font-weight:600">Taiwan ✈</div>
-                <div class="p-title">Intern<br>F&amp;B <small style="font-size:.5em">และ</small> <em>Kitchen</em></div>
-                <span class="p-tag">กับภัตตาคารประเทศไต้หวัน</span>
-              </div>
-              <div class="p-stats">
-                <div>ระยะเวลา<b style="color:#1e1b4b">6-12</b>เดือน</div>
-                <div>พร้อมเบี้ยเลี้ยง<b>29,500</b>TWD/เดือน</div>
-              </div>
-            </div>
-          </div>
-          <div class="highlight-side">
-            <div class="info-card reveal">
-              <div class="info-head">
-                <span class="icon-box" data-icon="bell"></span>
-                <div>
-                  <h3>Hotel Internship · 5 ตำแหน่ง</h3>
-                  <p>Front Office, Food &amp; Beverage, Housekeeping, Kitchen และ Waiter/Waitress · ทำงาน 5 วัน 8 ชม./วัน พร้อมที่พัก อาหาร และประกัน</p>
-                </div>
-              </div>
-              <div class="stat-row">
-                <div class="stat"><b>29,500 TWD</b><span>เบี้ยเลี้ยง/เดือน</span></div>
-                <div class="stat"><b>6-12 เดือน</b><span>ระยะเวลา</span></div>
-              </div>
-            </div>
-            <div class="mini-row">
-              <div class="mini-img media reveal" data-img="assets/images/taiwan-hours.jpg">
-                <div class="mini-fallback fallback-only">ชั่วโมงการฝึกงาน<br>ที่สร้างรายได้ 💰</div>
-              </div>
-              <div class="consult-card reveal">
-                <span class="bg-icon" data-icon="headset"></span>
-                <h3>ปรึกษาผู้เชี่ยวชาญ</h3>
-                <p>ทีมงานพร้อมให้คำแนะนำเส้นทางอาชีพ</p>
-                <a href="internship.html#apply" class="btn btn-yellow btn-sm">Contact Us</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Why choose ===== -->
-    <section class="section" style="padding-top:20px">
-      <div class="container why-grid">
-        <div class="reveal">
-          <h2 class="why-title">Why Choose Winner HR?</h2>
-          <div class="why-item">
-            <span class="dot-icon di-blue" data-icon="shieldCheck"></span>
-            <div><h4>Trusted Agency</h4><p>ดำเนินการอย่างถูกต้องตามกฎหมาย มั่นใจได้ในทุกขั้นตอนการสมัครและการเดินทาง</p></div>
-          </div>
-          <div class="why-item">
-            <span class="dot-icon di-yellow" data-icon="grad"></span>
-            <div><h4>Work + Learn + Earn Model</h4><p>ได้ทั้งประสบการณ์ทำงานจริง เรียนรู้วัฒนธรรมใหม่ และมีรายได้ระหว่างการฝึกงาน</p></div>
-          </div>
-          <div class="why-item">
-            <span class="dot-icon di-indigo" data-icon="globe"></span>
-            <div><h4>International Experience</h4><p>ยกระดับโปรไฟล์ของคุณด้วยประสบการณ์การทำงานในระดับสากล เพิ่มโอกาสในการหางานในอนาคต</p></div>
-          </div>
-        </div>
-        <div class="why-photos reveal">
-          <div class="media" data-img="assets/images/why-1.jpg"></div>
-          <div class="media" data-img="assets/images/why-2.jpg"></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <div id="site-footer"></div>
 
   <script src="js/config.js"></script>
   <script src="js/jobs-data.js"></script>

@@ -1,12 +1,45 @@
 /* =========================================================
-   ข้อมูลประเทศสำหรับหน้า JOB (Winner 96)
-   เพิ่มประเทศใหม่ = คัดลอก object ของ albania แล้วแก้ข้อมูล
-   - slug     : ใช้ใน URL → job-country.html?c=<slug>
-   - flag     : รหัสประเทศ 2 ตัว (ISO) ใช้ดึงธงจาก flagcdn.com
-   - active   : false = แสดงเป็น "เร็วๆ นี้" ใน dropdown
+   ข้อมูลประเทศสำหรับหน้า MANPOWER (Winner 96)
+   เพิ่มประเทศใหม่ = คัดลอก object ของประเทศที่มีอยู่แล้วแก้ข้อมูล
+   - slug      : ใช้ใน URL → job-country.html?c=<slug>
+   - flag      : รหัสประเทศ 2 ตัว (ISO) ใช้ดึงธงจาก flagcdn.com
+   - active    : false = แสดงเป็น "เร็วๆ นี้" ใน dropdown
+   - positions : รายการตำแหน่งงาน (ถ้ายังว่าง หน้าเว็บจะแสดง "กำลังอัปเดตตำแหน่งงาน" และยังรับใบสมัครได้)
+     รูปแบบ: { th: "ชื่อไทย", en: "English", gender: "ชาย/หญิง", age: "25–40 ปี", salary: "30,000 - 40,000", hot: true }
+   - benefits  : { icon: "home|utensils|shield|shieldCheck", title: "...", desc: "..." }
    ========================================================= */
 window.JOB_COUNTRIES = [
   {
+    slug: "taiwan",
+    active: true,
+    nameTh: "ไต้หวัน",
+    nameEn: "Taiwan",
+    flag: "tw",
+    region: "เอเชีย",
+    heroImage: "assets/images/job-taiwan-hero.jpg",
+    lead: "โอกาสทำงานในไต้หวันกับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
+    phone: "064-960-7187",
+    email: "winner96group@gmail.com",
+    positions: [],   // TODO: ใส่ตำแหน่งงานไต้หวัน
+    benefits: []     // TODO: ใส่สวัสดิการไต้หวัน
+  },
+  {
+    slug: "singapore",
+    active: true,
+    nameTh: "สิงคโปร์",
+    nameEn: "Singapore",
+    flag: "sg",
+    region: "เอเชีย",
+    heroImage: "assets/images/job-singapore-hero.jpg",
+    lead: "โอกาสทำงานในสิงคโปร์กับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
+    phone: "064-960-7187",
+    email: "winner96group@gmail.com",
+    positions: [],   // TODO: ใส่ตำแหน่งงานสิงคโปร์
+    benefits: []     // TODO: ใส่สวัสดิการสิงคโปร์
+  }
+
+  /* ===== แอลเบเนีย (ปิดไว้ เก็บข้อมูลเดิมไว้ใช้อ้างอิง) — ถ้าจะเปิดอีกครั้ง ให้เอา comment ออก =====
+  ,{
     slug: "albania",
     active: true,
     nameTh: "แอลเบเนีย",
@@ -41,6 +74,7 @@ window.JOB_COUNTRIES = [
       { icon: "shieldCheck", title: "ประกันภัยอุบัติเหตุครอบคลุม 1 ปี", desc: "ดูแลครอบคลุมตลอดระยะเวลาทำสัญญา รองรับให้คุณมั่นใจในทุกนาทีที่ใช้ชีวิต" }
     ]
   }
+  ===== จบข้อมูลแอลเบเนีย ===== */
 
   /* ตัวอย่างประเทศถัดไป (ยังไม่เปิด) — เอา comment ออกเมื่อพร้อม
   ,{

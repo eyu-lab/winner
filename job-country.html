@@ -20,7 +20,7 @@
   <script>
     /* Render the country page from JOB_COUNTRIES (js/jobs-data.js) */
     (function () {
-      const slug = new URLSearchParams(location.search).get("c") || "albania";
+      const slug = new URLSearchParams(location.search).get("c") || "taiwan";
       const c = JOB_COUNTRIES.find((x) => x.slug === slug && x.active);
       const main = document.getElementById("country-page");
       const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
@@ -46,6 +46,7 @@
         <div class="benefit-card reveal"><span class="b-icon">${ICONS[b.icon] || ICONS.check}</span>
         <h3>${esc(b.title)}</h3><p>${esc(b.desc)}</p></div>`).join("");
 
+      const hasPos = c.positions.length > 0;
       const posOptions = c.positions.map((p) => `<option>${esc(p.th)} (${esc(p.en)})</option>`).join("");
       const countryOptions = JOB_COUNTRIES.map((x) =>
         `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
@@ -74,14 +75,14 @@
         <div class="container">
           <div class="text-center reveal">
             <span class="eyebrow">Opportunities</span>
-            <h2 class="section-title" style="margin-top:8px">${c.positions.length} ตำแหน่งงานเด่น ประเทศ${esc(c.nameTh)}</h2>
-            <p class="section-sub">ตารางรายละเอียดตำแหน่งงาน เพศ อายุ และเรทอัตราค่าจ้างขั้นต่ำรายเดือน (บาท)</p>
+            <h2 class="section-title" style="margin-top:8px">${hasPos ? `${c.positions.length} ตำแหน่งงานเด่น` : "ตำแหน่งงาน"} ประเทศ${esc(c.nameTh)}</h2>
+            <p class="section-sub">${hasPos ? "ตารางรายละเอียดตำแหน่งงาน เพศ อายุ และเรทอัตราค่าจ้างขั้นต่ำรายเดือน (บาท)" : "กำลังอัปเดตตำแหน่งงานที่เปิดรับ — กรอกใบสมัครไว้ก่อนได้เลย เจ้าหน้าที่จะติดต่อกลับเมื่อมีตำแหน่งที่เหมาะกับคุณ"}</p>
             <div class="country-select-bar">
               <label for="cs">เปลี่ยนประเทศ:</label>
               <select id="cs" class="select-pretty">${countryOptions}</select>
             </div>
           </div>
-          <div class="table-card reveal">
+          ${hasPos ? `<div class="table-card reveal">
             <div class="table-scroll">
               <table class="job-table">
                 <thead><tr><th>ตำแหน่งงาน</th><th>เพศ</th><th>ช่วงอายุ</th><th>เงินเดือนโดยประมาณ / เดือน</th></tr></thead>
@@ -89,11 +90,11 @@
               </table>
             </div>
             <div class="table-foot">* อัตราเงินเดือนคำนวณเป็นเงินบาทโดยประมาณ อาจเปลี่ยนแปลงตามอัตราแลกเปลี่ยนและเงื่อนไขของนายจ้าง</div>
-          </div>
+          </div>` : `<div class="positions-soon reveal">${ICONS.clock || ""}<b>เร็วๆ นี้</b><span>สอบถามตำแหน่งงานล่าสุด โทร <a href="tel:${c.phone.replace(/-/g, "")}">${esc(c.phone)}</a></span><a href="#apply" class="btn btn-navy">ลงทะเบียนความสนใจ</a></div>`}
         </div>
       </section>
 
-      <section class="section" style="padding-top:20px">
+      ${c.benefits.length ? `<section class="section" style="padding-top:20px">
         <div class="container">
           <div class="text-center reveal">
             <h2 class="section-title">สิ่งที่คุณจะได้รับจากโครงการ</h2>
@@ -101,7 +102,7 @@
           </div>
           <div class="benefit-grid two" style="margin-top:44px">${benefits}</div>
         </div>
-      </section>
+      </section>` : ""}
 
       <section id="apply" class="section apply-section">
         <div class="container">
@@ -150,7 +151,8 @@
                 <div class="form-group-title"><span class="n">2</span>ตำแหน่งที่สมัคร</div>
                 <div class="form-grid">
                   <div class="field"><label for="j-pos">ตำแหน่งที่ต้องการ <span class="req">*</span></label>
-                    <select id="j-pos" name="ตำแหน่ง" required><option value="">— เลือกตำแหน่ง —</option>${posOptions}</select>
+                    ${hasPos ? `<select id="j-pos" name="ตำแหน่ง" required><option value="">— เลือกตำแหน่ง —</option>${posOptions}</select>`
+                      : `<input id="j-pos" name="ตำแหน่ง" required placeholder="เช่น พนักงานโรงงาน, แม่บ้าน, ช่างเชื่อม">`}
                   </div>
                   <div class="field"><label for="j-exp">ประสบการณ์ในตำแหน่งนี้</label>
                     <select id="j-exp" name="ประสบการณ์"><option value="">— เลือก —</option><option>ไม่มีประสบการณ์</option><option>น้อยกว่า 1 ปี</option><option>1-3 ปี</option><option>3-5 ปี</option><option>มากกว่า 5 ปี</option></select>

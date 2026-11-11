@@ -94,7 +94,7 @@
         <a href="index.html" class="${page === "home" ? "active" : ""}">HOME</a>
         <a href="internship.html" class="${page === "internship" ? "active" : ""}">INTERNSHIP</a>
         <div class="nav-dropdown">
-          <a href="job.html" class="nav-link ${page === "job" ? "active" : ""}" aria-haspopup="true">JOB ${ICONS.chevDown.replace("<svg", '<svg class="chev"')}</a>
+          <a href="job.html" class="nav-link ${page === "job" ? "active" : ""}" aria-haspopup="true">MANPOWER ${ICONS.chevDown.replace("<svg", '<svg class="chev"')}</a>
           <div class="dropdown-menu">${countryLinks()}</div>
         </div>
         <a href="about.html" class="${page === "about" ? "active" : ""}">ABOUT US</a>
@@ -151,7 +151,7 @@
       </div>
       <div class="footer-col">
         <h4>Programs</h4>
-        <a href="job.html">Job</a>
+        <a href="job.html">Manpower</a>
         <a href="internship.html">Internships</a>
         <a href="index.html#programs">Other Exchange Programs</a>
       </div>
@@ -240,7 +240,8 @@
       const src = el.dataset.img;
       const img = new Image();
       img.onload = () => {
-        el.style.setProperty("--img", `url("${src}")`);
+        // ใช้ URL เต็ม: url() ที่ผ่านตัวแปร CSS จะถูกอ่านเทียบกับโฟลเดอร์ css/ ทำให้หารูปไม่เจอ
+        el.style.setProperty("--img", `url("${img.src}")`);
         el.classList.add("has-img");
       };
       img.src = src;

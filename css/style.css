@@ -158,7 +158,7 @@ button, input, select, textarea { font: inherit; }
    ========================================================= */
 .hero-carousel { position: relative; overflow: hidden; background: #0d1a40; }
 .slides { display: flex; transition: transform .6s cubic-bezier(.6,.05,.3,1); }
-.slide { flex: 0 0 100%; aspect-ratio: 1440 / 560; min-height: 340px; min-width: 0; }
+.slide { flex: 0 0 100%; aspect-ratio: 970 / 250; min-height: 340px; min-width: 0; }
 .slide .slide-content {
   position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
   padding: 0 7%; color: #fff;
@@ -554,7 +554,7 @@ i[data-icon] { display: inline-flex; font-style: normal; }
 /* =========================================================
    Job pages
    ========================================================= */
-.w96-banner { aspect-ratio: 1440 / 560; min-height: 360px; min-width: 0; width: 100%; }
+.w96-banner { aspect-ratio: 970 / 250; min-height: 360px; min-width: 0; width: 100%; }
 .w96-banner .slide-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 7%; color: #fff; }
 
 .country-select-bar {
@@ -813,3 +813,45 @@ i[data-icon] { display: inline-flex; font-style: normal; }
 }
 .test-add:hover { border-color: var(--blue); background: #f3f7ff; }
 .test-add[hidden], .test-remove[hidden] { display: none; }
+
+/* Internship banner: full image (no crop), blurred copy fills the sides on wide screens */
+.tw-banner { position: relative; overflow: hidden; display: flex; justify-content: center; background: var(--navy-900); }
+.tw-banner-bg {
+  position: absolute; inset: -40px; background-position: center; background-size: cover;
+  filter: blur(28px) brightness(.55) saturate(1.2);
+}
+/* กรอบขนาดเดิม (กว้างสุด 1440 × สูง 560) แต่รูปไม่ถูกยืด: object-fit contain แสดงรูปตามสัดส่วนจริง
+   ที่ความสูง 560px รูปกว้าง ~863px (ต้นฉบับ 940×610) จึงไม่ถูกขยายเกินขนาดจริง → คมชัด */
+.tw-banner img {
+  position: relative; display: block; width: 100%; max-width: 1440px; height: 560px;
+  object-fit: contain; filter: drop-shadow(0 16px 40px rgba(0,0,0,.4));
+}
+@media (max-width: 900px) { .tw-banner { padding: 0; } .tw-banner img { height: auto; filter: none; } }
+
+/* Banners with real images: keep the image's own proportions so baked-in text is never cropped */
+.slide { aspect-ratio: 970 / 250; min-height: 0; }
+/* home banner: whole image always visible (contain) and sharp; blurred copy fills the side bands */
+.slide.has-img { background-image: none !important; }
+.slide.has-img::before { content: ""; position: absolute; inset: -30px; background: var(--img) center / cover no-repeat; filter: blur(24px) brightness(.85); }
+.slide.has-img::after { content: ""; position: absolute; inset: 0; background: var(--img) center / contain no-repeat; }
+/* job banner: same treatment as home — 970:250, whole image visible, blurred side bands */
+.w96-banner.has-img { aspect-ratio: 970 / 250; min-height: 0; background-image: none !important; }
+.w96-banner.has-img::before { content: ""; position: absolute; inset: -30px; background: var(--img) center / cover no-repeat; filter: blur(24px) brightness(.85); }
+.w96-banner.has-img::after { content: ""; position: absolute; inset: 0; background: var(--img) center / contain no-repeat; }
+@media (max-width: 640px) {
+  .slide { aspect-ratio: 2.6; min-height: 0; } /* มือถือ: ใช้สัดส่วนใกล้รูปจริง รูปจะเต็มจอไม่เล็กเกินไป */
+  .w96-banner.has-img { aspect-ratio: 2.6; min-height: 0; }
+  .hero-carousel .dots { bottom: 6px; }
+  .hero-carousel .dots button { width: 7px; height: 7px; }
+  .hero-carousel .dots button.active { width: 18px; }
+}
+
+/* Country page: no positions published yet */
+.positions-soon {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 560px; margin: 8px auto 0; padding: 32px 24px;
+  text-align: center; border: 1.5px dashed #c9d3e6; border-radius: var(--radius); background: var(--bg-soft); color: var(--muted);
+}
+.positions-soon svg { width: 36px; height: 36px; color: var(--navy); }
+.positions-soon b { font-size: 18px; color: var(--navy); }
+.positions-soon a:not(.btn) { color: var(--blue); font-weight: 600; }
+.positions-soon .btn { margin-top: 10px; }
