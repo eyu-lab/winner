@@ -855,3 +855,37 @@ i[data-icon] { display: inline-flex; font-style: normal; }
 .positions-soon b { font-size: 18px; color: var(--navy); }
 .positions-soon a:not(.btn) { color: var(--blue); font-weight: 600; }
 .positions-soon .btn { margin-top: 10px; }
+
+/* ===== Job application: experience entries ===== */
+.exp-list { margin-top: 14px; display: grid; gap: 12px; }
+.exp-hint { font-size: .85rem; color: var(--muted, #64748b); margin: 0; }
+.exp-entry { position: relative; display: grid; grid-template-columns: 1.3fr 1fr .8fr; gap: 12px 14px; padding: 16px 16px 16px 52px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+.exp-entry.four { grid-template-columns: .9fr 1.2fr 1fr .8fr; }
+.exp-no { position: absolute; left: 14px; top: 16px; width: 26px; height: 26px; border-radius: 50%; background: var(--navy, #0b2a5b); color: #fff; font-weight: 600; font-size: .85rem; display: grid; place-items: center; }
+.field input.is-auto, .field textarea.is-auto { background: #eef2f7; color: #334155; cursor: default; }
+.same-addr { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: #475569; margin: 2px 0 8px; cursor: pointer; font-weight: 400; }
+.same-addr input { width: 16px; height: 16px; accent-color: var(--blue, #2563eb); }
+@media (max-width: 900px) { .exp-entry, .exp-entry.four { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .exp-entry, .exp-entry.four { grid-template-columns: 1fr; padding: 46px 14px 14px; } .exp-no { top: 12px; } }
+
+/* ===== Thai date picker (เดือนไทย / พ.ศ.) ===== */
+.tdp { position: relative; }
+.field input.tdp-input { padding-right: 42px; cursor: pointer; }
+.tdp.open .tdp-input { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); background: #fff; }
+.tdp-ic { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--navy); cursor: pointer; display: inline-flex; }
+.tdp-ic svg { width: 18px; height: 18px; }
+.tdp-pop { width: 312px; top: calc(100% + 6px); }
+.tdp-head { gap: 6px; }
+.tdp-selects { display: flex; gap: 6px; flex: 1; justify-content: center; }
+.tdp-selects select { padding: 6px 8px; border: 1.5px solid #dbe1ec; border-radius: 8px; background: #fbfcfe; font: inherit; font-size: 13.5px; color: var(--navy); cursor: pointer; }
+.field .tdp-selects select { width: auto; min-height: 0; padding: 6px 8px; font-size: 13.5px; }
+.field .tdp-selects .tdp-month { flex: 1 1 auto; min-width: 0; }
+.field .tdp-selects .tdp-year { flex: 0 0 auto; }
+.tdp-dow, .tdp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.tdp-dow span { text-align: center; font-size: 12px; color: var(--muted); padding: 4px 0; }
+.tdp-dow span:first-child { color: #e11d48; }
+.tdp-day { aspect-ratio: 1; border: 1.5px solid transparent; border-radius: 8px; background: transparent; font: inherit; font-size: 13.5px; color: var(--text); cursor: pointer; transition: background .15s; }
+.tdp-day:hover:not(:disabled) { background: #eef3ff; }
+.tdp-day.now { border-color: #c7d4f4; font-weight: 600; }
+.tdp-day.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tdp-day:disabled { color: #c3c9d4; cursor: not-allowed; }

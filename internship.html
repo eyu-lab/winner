@@ -219,7 +219,7 @@
                     <label class="choice"><input type="radio" name="เพศ" value="LGBTQ+"><span>LGBTQ+</span></label>
                   </div>
                 </div>
-                <div class="field"><label for="i-dob">วันเกิด <span class="req">*</span></label><input id="i-dob" type="date" name="วันเกิด" required></div>
+                <div class="field"><label for="i-dob">วันเกิด <span class="req">*</span></label><input id="i-dob" name="วันเกิด" required data-thai-date data-min="1960-01-01" data-max="today" data-view-years-ago="20"></div>
                 <div class="field"><label for="i-passport">มีหนังสือเดินทาง (Passport) หรือไม่</label>
                   <select id="i-passport" name="หนังสือเดินทาง">
                     <option value="">— เลือก —</option><option>มีแล้ว (อายุเหลือมากกว่า 1 ปี)</option><option>มีแล้ว (ใกล้หมดอายุ)</option><option>ยังไม่มี</option>
@@ -423,6 +423,7 @@
   <script src="js/config.js"></script>
   <script src="js/jobs-data.js"></script>
   <script src="js/layout.js"></script>
+  <script src="js/thai-date.js"></script>
   <script src="js/forms.js"></script>
   <script>
     (function () {
@@ -482,14 +483,14 @@
         const nowIdx = now.getFullYear() * 12 + now.getMonth(); // เดือนปัจจุบันเป็นเลขลำดับ
         const minYear = now.getFullYear(), maxYear = minYear + 2;
         const label = (idx, month = "long") =>
-          new Date(Math.floor(idx / 12), idx % 12, 1).toLocaleDateString("th-TH", { month, year: "numeric" });
-        const shortMonth = (m) => new Date(2000, m, 1).toLocaleDateString("th-TH", { month: "short" });
+          `${(month === "short" ? THAI_DATE.MONTHS_SHORT : THAI_DATE.MONTHS)[idx % 12]} ${Math.floor(idx / 12) + THAI_DATE.BE}`;
+        const shortMonth = (m) => THAI_DATE.MONTHS_SHORT[m];
         const isSoon = (idx) => idx - nowIdx <= LEAD;
 
         let selected = null, viewYear = minYear;
 
         function render() {
-          yearEl.textContent = `${viewYear + 543} (${viewYear})`;
+          yearEl.textContent = `พ.ศ. ${viewYear + THAI_DATE.BE}`;
           pop.querySelector('[data-step="-1"]').disabled = viewYear <= minYear;
           pop.querySelector('[data-step="1"]').disabled = viewYear >= maxYear;
           grid.innerHTML = Array.from({ length: 12 }, (_, m) => {
@@ -508,7 +509,7 @@
           trigger.classList.toggle("filled", has);
           trigger.classList.toggle("soon", soon);
           hidden.value = has
-            ? `${label(selected)} (${Math.floor(selected / 12)}-${String(selected % 12 + 1).padStart(2, "0")})${soon ? " ⚠ เตรียมการน้อยกว่า 3 เดือน" : ""}`
+            ? `${label(selected)}${soon ? " ⚠ เตรียมการน้อยกว่า 3 เดือน" : ""}`
             : "";
           warning.hidden = !soon;
           const months = parseInt(duration.value, 10);

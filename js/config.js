@@ -5,7 +5,7 @@ window.WINNER_CONFIG = {
   /* URL ของ Google Apps Script (Web App) สำหรับบันทึกข้อมูลฟอร์มลง Google Sheets
      ดูวิธีตั้งค่าใน README.md → "ตั้งค่าเก็บข้อมูลฟอร์ม"
      ถ้าเว้นว่างไว้ ฟอร์มจะทำงานแบบ demo (บันทึกไว้ใน browser เท่านั้น) */
-  formEndpoint: "https://script.google.com/macros/s/AKfycbz8fmKijkQk3ULRzWDIAQyydvzE9w7DgDcGnPy7xQXejEzF_8UgS4JPXPA6AVD50jPIHQ/exec",
+  formEndpoint: "https://script.google.com/macros/s/AKfycbzGaGSW4jC6zJav6lOXSyYYldEizdmboirA_zsEAgvC_zeOPAm16sLBc-XWI8Oz0kaBww/exec",
 
   /* แสดงชื่อไฟล์รูปที่ยังไม่ได้ใส่ (มุมขวาล่างของกรอบรูป) — ปิดเป็น false ก่อนขึ้นเว็บจริง */
   showImageHints: true,

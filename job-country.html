@@ -17,6 +17,7 @@
   <script src="js/config.js"></script>
   <script src="js/jobs-data.js"></script>
   <script src="js/layout.js"></script>
+  <script src="js/thai-date.js"></script>
   <script>
     /* Render the country page from JOB_COUNTRIES (js/jobs-data.js) */
     (function () {
@@ -48,6 +49,32 @@
 
       const hasPos = c.positions.length > 0;
       const posOptions = c.positions.map((p) => `<option>${esc(p.th)} (${esc(p.en)})</option>`).join("");
+      /* แถวประสบการณ์ทำงาน: kind = "ในประเทศ" | "ต่างประเทศ", แถวที่ 1 บังคับกรอก แถวที่ 2 ไม่บังคับ */
+      const expRow = (kind, key, n) => {
+        const req = n === 1 ? " required" : "";
+        const star = n === 1 ? ' <span class="req">*</span>' : "";
+        const pre = `ประสบการณ์${kind} ${n}`;
+        const id = `j-${key}-${n}`;
+        return `<div class="exp-entry${key === "abroad" ? " four" : ""}">
+          <div class="exp-no">${n}</div>
+          ${key === "abroad" ? `<div class="field"><label for="${id}-country">ประเทศ${star}</label><input id="${id}-country" name="${pre} - ประเทศ"${req} placeholder="เช่น ไต้หวัน"></div>` : ""}
+          <div class="field"><label for="${id}-co">บริษัท${star}</label><input id="${id}-co" name="${pre} - บริษัท"${req}></div>
+          <div class="field"><label for="${id}-pos">ตำแหน่ง${star}</label><input id="${id}-pos" name="${pre} - ตำแหน่ง"${req}></div>
+          <div class="field"><label for="${id}-dur">ระยะเวลา${star}</label><input id="${id}-dur" name="${pre} - ระยะเวลา"${req} placeholder="เช่น 2 ปี 6 เดือน"></div>
+        </div>`;
+      };
+      const expBlock = (kind, key, num) => `
+                <div class="form-group-title"><span class="n">${num}</span>ประสบการณ์ทำงาน${kind}</div>
+                <div class="field"><span class="label">มีประสบการณ์ทำงาน${kind}หรือไม่ <span class="req">*</span></span>
+                  <div class="choice-row">
+                    <label class="choice"><input type="radio" name="ประสบการณ์${kind}" value="มี" required><span>มี</span></label>
+                    <label class="choice"><input type="radio" name="ประสบการณ์${kind}" value="ไม่มี"><span>ไม่มี</span></label>
+                  </div>
+                </div>
+                <div class="exp-list" data-show-when="ประสบการณ์${kind}=มี" hidden>
+                  <p class="exp-hint">ใส่ได้สูงสุด 2 บริษัท (ล่าสุดก่อน) · บริษัทที่ 2 ไม่บังคับ</p>
+                  ${expRow(kind, key, 1)}${expRow(kind, key, 2)}
+                </div>`;
       const countryOptions = JOB_COUNTRIES.map((x) =>
         `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
 
@@ -131,34 +158,54 @@
                 <input type="hidden" name="ประเทศ" value="${esc(c.nameTh)} (${esc(c.nameEn)})">
                 <h3>ใบสมัครงาน · ${esc(c.nameEn)}</h3>
                 <p class="form-sub">ช่องที่มีเครื่องหมาย <span style="color:#e11d48">*</span> จำเป็นต้องกรอก</p>
-                <div class="form-group-title"><span class="n">1</span>ข้อมูลผู้สมัคร</div>
+                <div class="form-group-title"><span class="n">1</span>ตำแหน่งงานที่สนใจ</div>
                 <div class="form-grid">
-                  <div class="field"><label for="j-name">ชื่อ-นามสกุล <span class="req">*</span></label><input id="j-name" name="ชื่อ-นามสกุล" required autocomplete="name"></div>
+                  <div class="field full"><label for="j-pos">ตำแหน่งงานที่สนใจ <span class="req">*</span></label>
+                    ${hasPos ? `<select id="j-pos" name="ตำแหน่ง" required><option value="">— เลือกตำแหน่ง —</option>${posOptions}</select>`
+                      : `<input id="j-pos" name="ตำแหน่ง" required placeholder="เช่น พนักงานโรงงาน, แม่บ้าน, ช่างเชื่อม">`}
+                  </div>
+                </div>
+
+                <div class="form-group-title"><span class="n">2</span>ข้อมูลส่วนตัว</div>
+                <div class="form-grid">
+                  <div class="field"><label for="j-name">ชื่อ-นามสกุล (ภาษาไทย) <span class="req">*</span></label><input id="j-name" name="ชื่อ-นามสกุล" required autocomplete="name" placeholder="เช่น สมชาย ใจดี"></div>
+                  <div class="field"><label for="j-name-en">ชื่อ-นามสกุล (ภาษาอังกฤษ) <span class="req">*</span></label><input id="j-name-en" name="ชื่อ-นามสกุล (อังกฤษ)" required placeholder="เช่น Somchai Jaidee" autocomplete="off" lang="en"></div>
                   <div class="field"><span class="label">เพศ <span class="req">*</span></span>
                     <div class="choice-row">
                       <label class="choice"><input type="radio" name="เพศ" value="ชาย" required><span>ชาย</span></label>
                       <label class="choice"><input type="radio" name="เพศ" value="หญิง"><span>หญิง</span></label>
                     </div>
                   </div>
-                  <div class="field"><label for="j-age">อายุ (ปี) <span class="req">*</span></label><input id="j-age" type="number" min="18" max="65" name="อายุ" required></div>
                   <div class="field"><label for="j-passport">หนังสือเดินทาง</label>
                     <select id="j-passport" name="หนังสือเดินทาง"><option value="">— เลือก —</option><option>มีแล้ว</option><option>ยังไม่มี</option></select>
                   </div>
+                  <div class="field"><label for="j-dob">วันเกิด <span class="req">*</span></label><input id="j-dob" name="วันเกิด" required data-thai-date data-min="1955-01-01" data-max="today" data-view-years-ago="25"></div>
+                  <div class="field"><label for="j-age">อายุ (ปี) <span class="req">*</span></label><input id="j-age" type="number" min="18" max="65" name="อายุ" required readonly tabindex="-1" placeholder="คำนวณจากวันเกิดอัตโนมัติ" class="is-auto"></div>
+                  <div class="field"><label for="j-height">ส่วนสูง (ซม.) <span class="req">*</span></label><input id="j-height" type="number" min="120" max="220" name="ส่วนสูง (ซม.)" required inputmode="numeric" placeholder="เช่น 165"></div>
+                </div>
+
+                <div class="form-group-title"><span class="n">3</span>ที่อยู่และการติดต่อ</div>
+                <div class="form-grid">
+                  <div class="field full"><label for="j-addr-id">ที่อยู่ตามบัตรประชาชน <span class="req">*</span></label><textarea id="j-addr-id" name="ที่อยู่ตามบัตรประชาชน" required placeholder="บ้านเลขที่ หมู่ ถนน ตำบล/แขวง อำเภอ/เขต จังหวัด รหัสไปรษณีย์"></textarea></div>
+                  <div class="field full"><label for="j-addr">ที่อยู่ที่สามารถติดต่อได้ <span class="req">*</span></label>
+                    <label class="same-addr"><input type="checkbox" id="j-addr-same"> ใช้ที่อยู่เดียวกับบัตรประชาชน</label>
+                    <textarea id="j-addr" name="ที่อยู่ที่ติดต่อได้" required placeholder="บ้านเลขที่ หมู่ ถนน ตำบล/แขวง อำเภอ/เขต จังหวัด รหัสไปรษณีย์"></textarea></div>
                   <div class="field"><label for="j-tel">เบอร์โทรศัพท์ <span class="req">*</span></label><input id="j-tel" type="tel" name="เบอร์โทร" required inputmode="tel" placeholder="08xxxxxxxx"></div>
-                  <div class="field"><label for="j-line">Line ID</label><input id="j-line" name="Line ID"></div>
                   <div class="field full"><label for="j-email">อีเมล</label><input id="j-email" type="email" name="อีเมล"></div>
                 </div>
-                <div class="form-group-title"><span class="n">2</span>ตำแหน่งที่สมัคร</div>
+
+                <div class="form-group-title"><span class="n">4</span>การศึกษา</div>
                 <div class="form-grid">
-                  <div class="field"><label for="j-pos">ตำแหน่งที่ต้องการ <span class="req">*</span></label>
-                    ${hasPos ? `<select id="j-pos" name="ตำแหน่ง" required><option value="">— เลือกตำแหน่ง —</option>${posOptions}</select>`
-                      : `<input id="j-pos" name="ตำแหน่ง" required placeholder="เช่น พนักงานโรงงาน, แม่บ้าน, ช่างเชื่อม">`}
+                  <div class="field"><label for="j-edu">ระดับการศึกษาสูงสุด <span class="req">*</span></label>
+                    <select id="j-edu" name="ระดับการศึกษาสูงสุด" required><option value="">— เลือก —</option><option>ประถมศึกษา</option><option>มัธยมศึกษาตอนต้น (ม.3)</option><option>มัธยมศึกษาตอนปลาย (ม.6)</option><option>ปวช.</option><option>ปวส. / อนุปริญญา</option><option>ปริญญาตรี</option><option>สูงกว่าปริญญาตรี</option></select>
                   </div>
-                  <div class="field"><label for="j-exp">ประสบการณ์ในตำแหน่งนี้</label>
-                    <select id="j-exp" name="ประสบการณ์"><option value="">— เลือก —</option><option>ไม่มีประสบการณ์</option><option>น้อยกว่า 1 ปี</option><option>1-3 ปี</option><option>3-5 ปี</option><option>มากกว่า 5 ปี</option></select>
-                  </div>
-                  <div class="field full"><label for="j-msg">รายละเอียดเพิ่มเติม</label><textarea id="j-msg" name="ข้อความเพิ่มเติม" placeholder="เช่น ประสบการณ์ทำงาน ทักษะ หรือคำถาม"></textarea></div>
+                  <div class="field"><label for="j-school">โรงเรียน / มหาวิทยาลัย <span class="req">*</span></label><input id="j-school" name="สถานศึกษา" required></div>
                 </div>
+${expBlock("ในประเทศ", "local", 5)}
+${expBlock("ต่างประเทศ", "abroad", 6)}
+
+                <div class="form-group-title"><span class="n">7</span>ข้อมูลเพิ่มเติม</div>
+                <div class="field"><label for="j-msg">รายละเอียดเพิ่มเติม</label><textarea id="j-msg" name="ข้อความเพิ่มเติม" placeholder="เช่น ทักษะพิเศษ ภาษา หรือคำถาม"></textarea></div>
                 <label class="consent"><input type="checkbox" name="ยินยอม PDPA" value="ยินยอม" required>
                   <span>ข้าพเจ้ายินยอมให้ Winner 96 Management Manpower Co.,Ltd เก็บและใช้ข้อมูลส่วนบุคคลข้างต้น เพื่อการติดต่อกลับและพิจารณาการสมัครงาน ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล (PDPA)</span></label>
                 <div class="form-actions">
@@ -178,6 +225,39 @@
       </section>`;
 
       document.getElementById("cs").addEventListener("change", (e) => (location.href = `job-country.html?c=${e.target.value}`));
+      /* ===== ใบสมัคร: อายุจากวันเกิด, ที่อยู่เดียวกัน, ช่องที่แสดงตามเงื่อนไข ===== */
+      (function () {
+        const form = main.querySelector('form[data-form="job"]');
+        if (!form) return;
+        const dob = form.querySelector("#j-dob"), age = form.querySelector("#j-age");
+        const calcAge = () => {
+          if (!dob.dataset.iso) { age.value = ""; return; }
+          const b = new Date(dob.dataset.iso + "T00:00:00"), t = new Date();
+          let a = t.getFullYear() - b.getFullYear();
+          if (t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) a--;
+          age.value = a >= 0 ? a : "";
+          age.closest(".field").classList.remove("invalid");
+        };
+        dob.addEventListener("change", calcAge);
+        dob.addEventListener("input", calcAge);
+
+        const same = form.querySelector("#j-addr-same"), addrId = form.querySelector("#j-addr-id"), addr = form.querySelector("#j-addr");
+        const syncAddr = () => { if (same.checked) addr.value = addrId.value; addr.readOnly = same.checked; addr.classList.toggle("is-auto", same.checked); };
+        same.addEventListener("change", syncAddr);
+        addrId.addEventListener("input", () => same.checked && syncAddr());
+
+        const blocks = form.querySelectorAll("[data-show-when]");
+        const sync = () => blocks.forEach((b) => {
+          const [name, val] = b.dataset.showWhen.split("=");
+          const on = !!form.querySelector(`[name="${CSS.escape(name)}"][value="${CSS.escape(val)}"]:checked`);
+          b.hidden = !on;
+          b.querySelectorAll("input, select, textarea").forEach((el) => (el.disabled = !on));
+        });
+        form.addEventListener("change", (e) => { if (e.target.type === "radio") sync(); });
+        form.addEventListener("reset", () => setTimeout(() => { sync(); syncAddr(); age.value = ""; }));
+        sync();
+      })();
+
       if (location.hash) setTimeout(() => document.querySelector(location.hash)?.scrollIntoView(), 50);
     })();
   </script>
