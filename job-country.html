@@ -75,6 +75,51 @@
                   <p class="exp-hint">ใส่ได้สูงสุด 2 บริษัท (ล่าสุดก่อน) · บริษัทที่ 2 ไม่บังคับ</p>
                   ${expRow(kind, key, 1)}${expRow(kind, key, 2)}
                 </div>`;
+      /* ใบประกาศรับสมัคร (แสดงใต้แบนเนอร์) */
+      // ประกาศที่ "เปิดรับ" ขึ้นก่อน แล้วตามด้วยที่หมดเขต (ลำดับเดิมในแต่ละกลุ่มคงไว้)
+      const anns = (c.announcements || []).slice().sort((a, b) => (a.status === "closed") - (b.status === "closed"));
+      const annThumb = (src) => src.replace(/\/announce\/([^/]+)$/, "/announce/thumb/$1");
+      const annOpenCount = anns.filter((a) => a.status !== "closed").length;
+      const annCards = anns.map((a, i) => {
+        const closed = a.status === "closed";
+        return `<article class="ann-slide${closed ? " closed" : ""}" data-ann="${i}">
+          <img src="${esc(annThumb(a.image))}" alt="" loading="lazy" decoding="async"
+            onerror="if(this.src.indexOf('/thumb/')>-1){this.src='${esc(a.image)}'}">
+          <span class="ann-shade"></span>
+          ${closed ? `<span class="ann-stamp"><b>หมดเขตรับสมัครแล้ว</b><small>CLOSED</small></span>` : ""}
+          <button type="button" class="ann-hit" data-ann-view="${i}" aria-label="ดูประกาศ ${esc(a.title)}"></button>
+          <div class="ann-content">
+            <span class="ann-status ${closed ? "is-closed" : "is-open"}">${closed ? "หมดเขตรับสมัครแล้ว" : "เปิดรับสมัคร"}</span>
+            <h3 class="ann-title">${esc(a.title)}</h3>
+            ${a.detail ? `<p class="ann-detail">${esc(a.detail)}</p>` : ""}
+            <div class="ann-actions">
+              ${closed ? "" : `<a href="#apply" class="ann-apply" data-ann-apply="${i}">สมัครตำแหน่งนี้ ${ICONS.arrowRight || "→"}</a>`}
+              <button type="button" class="ann-view" data-ann-view="${i}">${ICONS.search || ""} ดูประกาศ</button>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+      const annSection = anns.length ? `
+      <section id="announcements" class="section announce-section">
+        <div class="container">
+          <div class="ann-head reveal">
+            <div>
+              <span class="eyebrow">Job Announcements</span>
+              <h2 class="section-title">ประกาศรับสมัครงาน ประเทศ${esc(c.nameTh)}</h2>
+              <p class="ann-lead">${annOpenCount
+                ? `เปิดรับสมัคร <b>${annOpenCount}</b> ประกาศ — กด <b>“สมัครตำแหน่งนี้”</b> เพื่อกรอกใบสมัครได้ทันที`
+                : `ประกาศทั้งหมดปิดรับสมัครแล้ว — <a href="#apply">ลงทะเบียนความสนใจไว้ก่อน</a> เจ้าหน้าที่จะแจ้งเมื่อเปิดรอบใหม่`}</p>
+            </div>
+            <div class="ann-arrows"${anns.length < 2 ? " hidden" : ""}>
+              <button type="button" class="ann-arrow" data-dir="-1" aria-label="ประกาศก่อนหน้า">${ICONS.chevLeft}</button>
+              <button type="button" class="ann-arrow" data-dir="1" aria-label="ประกาศถัดไป">${ICONS.chevRight}</button>
+            </div>
+          </div>
+        </div>
+        <div class="ann-track${anns.length < 3 ? " few" : ""}" tabindex="0" aria-label="รายการประกาศรับสมัครงาน">${annCards}</div>
+        <div class="ann-dots"${anns.length < 2 ? " hidden" : ""}>${anns.map((_, i) => `<button type="button" aria-label="ไปที่ประกาศ ${i + 1}"></button>`).join("")}</div>
+      </section>` : "";
+
       const countryOptions = JOB_COUNTRIES.map((x) =>
         `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
 
@@ -97,6 +142,7 @@
           <div class="flag-circle"><img src="${flagUrl(c.flag, 640)}" alt="ธงชาติ${esc(c.nameTh)}"></div>
         </div>
       </section>
+${annSection}
 
       <section id="positions" class="section">
         <div class="container">
@@ -225,6 +271,133 @@ ${expBlock("ต่างประเทศ", "abroad", 6)}
       </section>`;
 
       document.getElementById("cs").addEventListener("change", (e) => (location.href = `job-country.html?c=${e.target.value}`));
+
+      /* ===== ดูใบประกาศแบบเต็ม (ใช้หน้าตาเดียวกับอัลบั้มหน้า Internship) ===== */
+      (function announcementViewer() {
+        if (!anns.length) return;
+        const v = document.createElement("div");
+        v.className = "album-viewer ann-viewer";
+        v.hidden = true;
+        v.setAttribute("role", "dialog");
+        v.setAttribute("aria-modal", "true");
+        v.setAttribute("aria-labelledby", "annv-title");
+        v.innerHTML = `
+          <div class="av-backdrop" data-av-close></div>
+          <div class="av-panel">
+            <header class="av-head">
+              <div><span class="av-cat">ประกาศรับสมัครงาน · ${esc(c.nameTh)}</span><h3 id="annv-title"></h3><span class="av-sub"></span></div>
+              <button type="button" class="av-close" data-av-close aria-label="ปิด">${ICONS.close}</button>
+            </header>
+            <div class="av-stage">
+              <button type="button" class="av-nav prev" aria-label="ประกาศก่อนหน้า"${anns.length < 2 ? " hidden" : ""}>${ICONS.chevLeft}</button>
+              <figure class="av-figure"><img alt=""><span class="ann-viewer-stamp" hidden>หมดเขตรับสมัครแล้ว</span><span class="av-count"></span></figure>
+              <button type="button" class="av-nav next" aria-label="ประกาศถัดไป"${anns.length < 2 ? " hidden" : ""}>${ICONS.chevRight}</button>
+            </div>
+            <p class="av-caption ann-viewer-note"></p>
+            <div class="av-thumbs"></div>
+          </div>`;
+        document.body.appendChild(v);
+        const img = v.querySelector(".av-figure img"), stamp = v.querySelector(".ann-viewer-stamp");
+        const note = v.querySelector(".ann-viewer-note"), thumbs = v.querySelector(".av-thumbs");
+        thumbs.hidden = anns.length < 2;
+        thumbs.innerHTML = anns.map((a, k) => `<button type="button" aria-label="ประกาศที่ ${k + 1}"><span class="ps-photo"><img src="${esc(annThumb(a.image))}" alt="" loading="lazy"></span></button>`).join("");
+        let idx = 0, lastFocus = null;
+        const show = (n) => {
+          idx = (n + anns.length) % anns.length;
+          const a = anns[idx], closed = a.status === "closed";
+          img.src = a.image;
+          img.alt = a.title;
+          v.querySelector("#annv-title").textContent = a.title;
+          v.querySelector(".av-sub").textContent = a.detail || "";
+          v.querySelector(".av-count").textContent = anns.length > 1 ? `${idx + 1} / ${anns.length}` : "";
+          v.querySelector(".av-count").hidden = anns.length < 2;
+          stamp.hidden = !closed;
+          v.classList.toggle("is-closed", closed);
+          note.innerHTML = closed
+            ? `ประกาศนี้<b>หมดเขตรับสมัครแล้ว</b> · <a href="#apply" data-av-close>ลงทะเบียนความสนใจไว้ก่อน</a> เพื่อรับแจ้งเมื่อเปิดรอบใหม่`
+            : `<a href="#apply" class="ann-apply" data-ann-apply="${idx}">สมัครตำแหน่งนี้ ${ICONS.arrowRight || "→"}</a><span class="ann-viewer-tel">หรือโทร ${esc(c.phone)}</span>`;
+          thumbs.querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === idx));
+        };
+        const open = (i) => {
+          lastFocus = document.activeElement;
+          v.hidden = false;
+          document.documentElement.classList.add("av-lock");
+          requestAnimationFrame(() => v.classList.add("open"));
+          show(i);
+          v.querySelector(".av-close").focus();
+        };
+        const close = () => {
+          v.classList.remove("open");
+          document.documentElement.classList.remove("av-lock");
+          setTimeout(() => (v.hidden = true), 220);
+          if (lastFocus) lastFocus.focus();
+        };
+        /* "สมัครตำแหน่งนี้" → ใส่ชื่อประกาศในช่องตำแหน่ง แล้วเลื่อนไปที่ฟอร์ม */
+        const applyFor = (i) => {
+          const a = anns[i], pos = main.querySelector("#j-pos");
+          if (!a || !pos) return;
+          if (pos.tagName === "SELECT" && ![...pos.options].some((o) => o.value === a.title)) pos.add(new Option(a.title, a.title), 1);
+          pos.value = a.title;
+          pos.dispatchEvent(new Event("change", { bubbles: true }));
+          const field = pos.closest(".field");
+          field.classList.remove("invalid", "flash");
+          void field.offsetWidth;
+          field.classList.add("flash");
+          // เลื่อนไปที่ตัวฟอร์มโดยตรง (เผื่อแถบเมนูด้านบน ~90px)
+          const formCard = pos.closest(".form-card") || main.querySelector("#apply");
+          window.scrollTo({ top: formCard.getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" });
+          setTimeout(() => main.querySelector("#j-name")?.focus({ preventScroll: true }), 700);
+        };
+
+        main.addEventListener("click", (e) => {
+          const ap = e.target.closest("[data-ann-apply]");
+          if (ap) { e.preventDefault(); return applyFor(+ap.dataset.annApply); }
+          const view = e.target.closest("[data-ann-view]");
+          if (view) open(+view.dataset.annView);
+        });
+        v.addEventListener("click", (e) => {
+          const ap = e.target.closest("[data-ann-apply]");
+          if (ap) { e.preventDefault(); close(); return applyFor(+ap.dataset.annApply); }
+          if (e.target.closest("[data-av-close]")) return close();
+          if (e.target.closest(".av-nav.prev")) return show(idx - 1);
+          if (e.target.closest(".av-nav.next")) return show(idx + 1);
+          const t = e.target.closest(".av-thumbs button");
+          if (t) show([...thumbs.children].indexOf(t));
+        });
+        document.addEventListener("keydown", (e) => {
+          if (v.hidden) return;
+          if (e.key === "Escape") close();
+          else if (e.key === "ArrowLeft" && anns.length > 1) show(idx - 1);
+          else if (e.key === "ArrowRight" && anns.length > 1) show(idx + 1);
+        });
+
+        /* ----- แถบเลื่อนการ์ด (ปุ่มลูกศร + จุดบอกตำแหน่ง) ----- */
+        const track = main.querySelector(".ann-track");
+        const slides = [...track.children];
+        const dots = [...main.querySelectorAll(".ann-dots button")];
+        const arrows = main.querySelectorAll(".ann-arrow");
+        const step = () => (slides[1] ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth);
+        const update = () => {
+          const max = track.scrollWidth - track.clientWidth - 2;
+          arrows[0].disabled = track.scrollLeft <= 2;
+          arrows[1].disabled = track.scrollLeft >= max;
+          const cur = max <= 0 ? 0 : Math.round(track.scrollLeft / step());
+          const at = track.scrollLeft >= max ? slides.length - 1 : cur;
+          dots.forEach((d, k) => d.classList.toggle("on", k === at));
+          main.querySelector(".ann-arrows").classList.toggle("is-static", max <= 0);
+          main.querySelector(".ann-dots").classList.toggle("is-static", max <= 0);
+        };
+        arrows.forEach((b) => b.addEventListener("click", () => track.scrollBy({ left: +b.dataset.dir * step(), behavior: "smooth" })));
+        dots.forEach((d, k) => d.addEventListener("click", () => track.scrollTo({ left: slides[k].offsetLeft - slides[0].offsetLeft, behavior: "smooth" })));
+        track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+        track.addEventListener("keydown", (e) => {
+          if (e.target !== track) return;
+          if (e.key === "ArrowLeft") { e.preventDefault(); track.scrollBy({ left: -step(), behavior: "smooth" }); }
+          if (e.key === "ArrowRight") { e.preventDefault(); track.scrollBy({ left: step(), behavior: "smooth" }); }
+        });
+        window.addEventListener("resize", update);
+        update();
+      })();
       /* ===== ใบสมัคร: อายุจากวันเกิด, ที่อยู่เดียวกัน, ช่องที่แสดงตามเงื่อนไข ===== */
       (function () {
         const form = main.querySelector('form[data-form="job"]');

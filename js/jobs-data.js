@@ -7,6 +7,9 @@
    - positions : รายการตำแหน่งงาน (ถ้ายังว่าง หน้าเว็บจะแสดง "กำลังอัปเดตตำแหน่งงาน" และยังรับใบสมัครได้)
      รูปแบบ: { th: "ชื่อไทย", en: "English", gender: "ชาย/หญิง", age: "25–40 ปี", salary: "30,000 - 40,000", hot: true }
    - benefits  : { icon: "home|utensils|shield|shieldCheck", title: "...", desc: "..." }
+   - announcements : ใบประกาศ/โปสเตอร์รับสมัคร แสดงใต้แบนเนอร์
+     รูปแบบ: { image: "assets/images/announce/xxx.jpg", title: "...", detail: "...", status: "open" | "closed" }
+     (รูปย่อสำหรับการ์ดอยู่ที่ assets/images/announce/thumb/ ชื่อเดียวกัน — ถ้าไม่มีจะใช้รูปเต็มแทน)
    ========================================================= */
 window.JOB_COUNTRIES = [
   {
@@ -20,6 +23,13 @@ window.JOB_COUNTRIES = [
     lead: "โอกาสทำงานในไต้หวันกับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
     phone: "064-960-7187",
     email: "winner96group@gmail.com",
+    // ใบประกาศรับสมัคร (แสดงใต้แบนเนอร์) — status: "open" = เปิดรับ, "closed" = หมดเขตรับสมัครแล้ว
+    announcements: [
+      { image: "assets/images/announce/taiwan-paper-factory.jpg", title: "งานโรงงานกระดาษ ไต้หวัน", detail: "เงินเดือนเริ่มต้น 29,500 TWD · มี OT ทุกวัน", status: "closed" },
+      { image: "assets/images/announce/taiwan-saa-plc.jpg", title: "SAA Symtek Automation Asia · ตำแหน่ง PLC", detail: "เงินเดือน 35,000–50,000 บาท/เดือน", status: "closed" },
+      { image: "assets/images/announce/taiwan-saa-symtek.jpg", title: "ร่วมงานกับ SAA Symtek Automation Asia", detail: "ยินดีรับผู้มีประสบการณ์ PLC", status: "closed" },
+      { image: "assets/images/announce/taiwan-caregiver.jpg", title: "ดูแลผู้สูงอายุที่ไต้หวัน", detail: "อบรมภาษา + หลักสูตรเพิ่มเติม", status: "open" }
+    ],
     positions: [],   // TODO: ใส่ตำแหน่งงานไต้หวัน
     benefits: []     // TODO: ใส่สวัสดิการไต้หวัน
   },
@@ -34,6 +44,9 @@ window.JOB_COUNTRIES = [
     lead: "โอกาสทำงานในสิงคโปร์กับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
     phone: "064-960-7187",
     email: "winner96group@gmail.com",
+    announcements: [
+      { image: "assets/images/announce/singapore-construction.jpg", title: "นายจ้างรับตรง งานก่อสร้าง สิงคโปร์", detail: "รายได้ไม่ต่ำกว่า 40,000 บาท · ช่างไม้ ช่างผูกเหล็ก ช่างคอนกรีต", status: "closed" }
+    ],
     positions: [],   // TODO: ใส่ตำแหน่งงานสิงคโปร์
     benefits: []     // TODO: ใส่สวัสดิการสิงคโปร์
   }
