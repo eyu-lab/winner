@@ -1115,3 +1115,15 @@ html.av-lock { overflow: hidden; }
   .ann-title { font-size: 16.5px; }
   .ann-stamp b { font-size: 16px; }
 }
+
+/* ===== โลโก้บนการ์ดหมวด (Manpower / Internship) ===== */
+.cat-card { align-content: center; gap: 14px; }
+.cat-logo {
+  position: relative; z-index: 2; display: block; width: clamp(88px, 9vw, 116px); aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+  background: #fff; border: 3px solid rgba(255, 255, 255, .95); box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+  transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+}
+.cat-logo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cat-intern .cat-logo img { object-fit: contain; transform: scale(1.12); }
+.cat-card:hover .cat-logo { transform: scale(1.06) translateY(-2px); }
+@media (max-width: 640px) { .cat-card { gap: 10px; } .cat-logo { width: 72px; } }

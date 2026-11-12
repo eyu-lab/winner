@@ -35,14 +35,6 @@
       }
       document.title = `สมัครงานประเทศ${c.nameTh} (${c.nameEn}) | Winner 96`;
 
-      const rows = c.positions.map((p, i) => `
-        <tr class="${p.hot ? "hot" : ""}">
-          <td class="pos">${i + 1}. ${esc(p.th)} (${esc(p.en)})${p.hot ? '<span class="hot-badge">HOT</span>' : ""}</td>
-          <td>${esc(p.gender)}</td>
-          <td>${esc(p.age)}</td>
-          <td class="salary"><b>${esc(p.salary)}</b><small>บาท / เดือน</small></td>
-        </tr>`).join("");
-
       const benefits = c.benefits.map((b) => `
         <div class="benefit-card reveal"><span class="b-icon">${ICONS[b.icon] || ICONS.check}</span>
         <h3>${esc(b.title)}</h3><p>${esc(b.desc)}</p></div>`).join("");
@@ -76,6 +68,9 @@
                   ${expRow(kind, key, 1)}${expRow(kind, key, 2)}
                 </div>`;
       /* ใบประกาศรับสมัคร (แสดงใต้แบนเนอร์) */
+      const countryOptions = JOB_COUNTRIES.map((x) =>
+        `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
+      const countrySelect = `<label for="cs">เปลี่ยนประเทศ:</label><select id="cs" class="select-pretty">${countryOptions}</select>`;
       // ประกาศที่ "เปิดรับ" ขึ้นก่อน แล้วตามด้วยที่หมดเขต (ลำดับเดิมในแต่ละกลุ่มคงไว้)
       const anns = (c.announcements || []).slice().sort((a, b) => (a.status === "closed") - (b.status === "closed"));
       const annThumb = (src) => src.replace(/\/announce\/([^/]+)$/, "/announce/thumb/$1");
@@ -109,6 +104,7 @@
               <p class="ann-lead">${annOpenCount
                 ? `เปิดรับสมัคร <b>${annOpenCount}</b> ประกาศ — กด <b>“สมัครตำแหน่งนี้”</b> เพื่อกรอกใบสมัครได้ทันที`
                 : `ประกาศทั้งหมดปิดรับสมัครแล้ว — <a href="#apply">ลงทะเบียนความสนใจไว้ก่อน</a> เจ้าหน้าที่จะแจ้งเมื่อเปิดรอบใหม่`}</p>
+              <div class="country-select-bar">${countrySelect}</div>
             </div>
             <div class="ann-arrows"${anns.length < 2 ? " hidden" : ""}>
               <button type="button" class="ann-arrow" data-dir="-1" aria-label="ประกาศก่อนหน้า">${ICONS.chevLeft}</button>
@@ -120,8 +116,6 @@
         <div class="ann-dots"${anns.length < 2 ? " hidden" : ""}>${anns.map((_, i) => `<button type="button" aria-label="ไปที่ประกาศ ${i + 1}"></button>`).join("")}</div>
       </section>` : "";
 
-      const countryOptions = JOB_COUNTRIES.map((x) =>
-        `<option value="${x.slug}" ${x.slug === c.slug ? "selected" : ""} ${x.active ? "" : "disabled"}>${x.nameTh} (${x.nameEn})${x.active ? "" : " — เร็วๆ นี้"}</option>`).join("");
 
       main.innerHTML = `
       <section class="job-hero media" data-img="${c.heroImage}">
@@ -136,36 +130,15 @@
             </div>
             <div class="hero-actions">
               <a href="#apply" class="btn btn-yellow">สมัครงานตอนนี้</a>
-              <a href="#positions" class="btn btn-outline-light">ดูรายละเอียดงาน</a>
+              ${anns.length ? `<a href="#announcements" class="btn btn-outline-light">ดูประกาศรับสมัคร</a>` : ""}
             </div>
           </div>
           <div class="flag-circle"><img src="${flagUrl(c.flag, 640)}" alt="ธงชาติ${esc(c.nameTh)}"></div>
         </div>
       </section>
 ${annSection}
-
-      <section id="positions" class="section">
-        <div class="container">
-          <div class="text-center reveal">
-            <span class="eyebrow">Opportunities</span>
-            <h2 class="section-title" style="margin-top:8px">${hasPos ? `${c.positions.length} ตำแหน่งงานเด่น` : "ตำแหน่งงาน"} ประเทศ${esc(c.nameTh)}</h2>
-            <p class="section-sub">${hasPos ? "ตารางรายละเอียดตำแหน่งงาน เพศ อายุ และเรทอัตราค่าจ้างขั้นต่ำรายเดือน (บาท)" : "กำลังอัปเดตตำแหน่งงานที่เปิดรับ — กรอกใบสมัครไว้ก่อนได้เลย เจ้าหน้าที่จะติดต่อกลับเมื่อมีตำแหน่งที่เหมาะกับคุณ"}</p>
-            <div class="country-select-bar">
-              <label for="cs">เปลี่ยนประเทศ:</label>
-              <select id="cs" class="select-pretty">${countryOptions}</select>
-            </div>
-          </div>
-          ${hasPos ? `<div class="table-card reveal">
-            <div class="table-scroll">
-              <table class="job-table">
-                <thead><tr><th>ตำแหน่งงาน</th><th>เพศ</th><th>ช่วงอายุ</th><th>เงินเดือนโดยประมาณ / เดือน</th></tr></thead>
-                <tbody>${rows}</tbody>
-              </table>
-            </div>
-            <div class="table-foot">* อัตราเงินเดือนคำนวณเป็นเงินบาทโดยประมาณ อาจเปลี่ยนแปลงตามอัตราแลกเปลี่ยนและเงื่อนไขของนายจ้าง</div>
-          </div>` : `<div class="positions-soon reveal">${ICONS.clock || ""}<b>เร็วๆ นี้</b><span>สอบถามตำแหน่งงานล่าสุด โทร <a href="tel:${c.phone.replace(/-/g, "")}">${esc(c.phone)}</a></span><a href="#apply" class="btn btn-navy">ลงทะเบียนความสนใจ</a></div>`}
-        </div>
-      </section>
+${anns.length ? "" : `
+      <div class="container country-switch-only"><div class="country-select-bar">${countrySelect}</div></div>`}
 
       ${c.benefits.length ? `<section class="section" style="padding-top:20px">
         <div class="container">
