@@ -179,6 +179,38 @@
       </div>
     </section>
 
+    <!-- ===== Activities / Albums =====
+         รูปกิจกรรม: ใส่ไฟล์ที่ assets/images/activity/<ชื่ออัลบั้ม>-1.jpg, -2.jpg, ... (แก้รายการอัลบั้มที่ ACTIVITY_ALBUMS ด้านล่างไฟล์) -->
+    <section id="activities" class="section activity-section">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="eyebrow">Our Activities</span>
+          <h2 class="section-title" style="margin-top:6px">กิจกรรมและภาพการทำงานของเรา</h2>
+          <p class="section-sub">บรรยากาศการดูแลนักศึกษาตั้งแต่เตรียมตัว เดินทาง จนถึงฝึกงานจริงที่ไต้หวัน — กดที่อัลบั้มเพื่อดูภาพทั้งหมด</p>
+          <span class="title-underline"></span>
+        </div>
+        <div class="album-grid reveal" id="album-grid"></div>
+      </div>
+    </section>
+
+    <!-- Album viewer (lightbox) -->
+    <div class="album-viewer" id="album-viewer" hidden role="dialog" aria-modal="true" aria-labelledby="av-title">
+      <div class="av-backdrop" data-av-close></div>
+      <div class="av-panel">
+        <header class="av-head">
+          <div><span class="av-cat"></span><h3 id="av-title"></h3><span class="av-sub"></span></div>
+          <button type="button" class="av-close" data-av-close aria-label="ปิด"></button>
+        </header>
+        <div class="av-stage">
+          <button type="button" class="av-nav prev" aria-label="รูปก่อนหน้า"></button>
+          <figure class="av-figure"><img alt=""><span class="av-count"></span></figure>
+          <button type="button" class="av-nav next" aria-label="รูปถัดไป"></button>
+        </div>
+        <p class="av-caption" hidden></p>
+        <div class="av-thumbs"></div>
+      </div>
+    </div>
+
     <!-- ===== Application form ===== -->
     <section id="apply" class="section apply-section">
       <div class="container">
@@ -591,6 +623,176 @@
           if (box) box.checked = true;
         })
       );
+    })();
+  </script>
+
+  <script>
+    /* =========================================================
+       อัลบั้มกิจกรรม (Photo stack cards)
+       เพิ่ม/แก้อัลบั้ม: แก้รายการด้านล่าง
+       - pics("ชื่อ", [คำบรรยายรูป 1, รูป 2, ...]) = assets/images/activity/ชื่อ-1.jpg, ชื่อ-2.jpg, ...
+         (จำนวนรูป = จำนวนคำบรรยาย · 3 รูปแรกจะแสดงบนการ์ด)
+       - รูปย่อสำหรับการ์ด/แถบรูปเล็ก อยู่ที่ assets/images/activity/thumb/ (ชื่อไฟล์เดียวกัน, กว้าง ~520px)
+         ถ้าไม่มีรูปย่อ จะใช้รูปเต็มแทนให้อัตโนมัติ
+       ========================================================= */
+    const pics = (name, captions) => captions.map((caption, i) => ({ src: `assets/images/activity/${name}-${i + 1}.jpg`, caption }));
+    const ACTIVITY_ALBUMS = [
+      {
+        category: "Hotel Partners", title: "เยี่ยมโรงแรมพาร์ทเนอร์", subtitle: "ไทเป ไต้หวัน · 5 โรงแรม",
+        images: pics("hotel", [
+          "ILLUME Taipei", "Regent Taipei", "United Hotel Taipei", "Hotel Royal Nikko Taipei", "Hotel Royal Nikko Taipei",
+          "Howard Civil Service International House", "Howard Civil Service International House", "Howard Civil Service International House",
+          "Regent Taipei", "Regent Taipei", "United Hotel Taipei"
+        ])
+      },
+      {
+        category: "Roadshow", title: "แนะแนวมหาวิทยาลัย กรุงเทพฯ", subtitle: "ศรีปทุม · ม.กรุงเทพ · มหิดล และอื่นๆ",
+        images: pics("bangkok", [
+          "ม.ศรีปทุม กรุงเทพฯ · 13 มี.ค. 69", "ม.กรุงเทพ · 24 มี.ค. 69", "ม.มหิดล ศาลายา · MULA Job Fair & Internship · 25 เม.ย. 69",
+          "ม.ศรีปทุม กรุงเทพฯ · 13 มี.ค. 69", "ม.ศรีปทุม กรุงเทพฯ · 13 มี.ค. 69", "ม.ศรีปทุม · 21 ต.ค. 69",
+          "ม.กรุงเทพ · 24 มี.ค. 69", "ม.กรุงเทพ · 24 มี.ค. 69",
+          "ม.ธุรกิจบัณฑิตย์ · คณะการโรงแรมและการท่องเที่ยว", "ม.ธุรกิจบัณฑิตย์ · คณะการโรงแรมและการท่องเที่ยว",
+          "ม.มหิดล ศาลายา · MULA Job Fair & Internship · 25 เม.ย. 69", "ม.มหิดล ศาลายา · MULA Job Fair & Internship · 25 เม.ย. 69",
+          "ม.เซาธ์อีสท์บางกอก บางนา · 30 มี.ค. 69", "ม.เซาธ์อีสท์บางกอก บางนา · 30 มี.ค. 69",
+          "วิทยาลัยดุสิตธานี · 30 มิ.ย. 69", "บูธแนะแนวโครงการ · 9 มิ.ย. 69"
+        ])
+      },
+      {
+        category: "Partnership", title: "ความร่วมมือ ม.บูรพา", subtitle: "ประชุม · แนะแนว · หลักสูตรนานาชาติ",
+        images: pics("burapha", [
+          "ม.บูรพา", "สาขาภาษาจีน ม.บูรพา · 9 ก.ค. 69", "ประชุม ม.บูรพา (หลักสูตรนานาชาติ) · 23 มี.ค. 69",
+          "BBS ม.บูรพา · อุตสาหกรรมการท่องเที่ยวและบริการ", "สาขาภาษาจีน ม.บูรพา · 9 ก.ค. 69", "สาขาภาษาจีน ม.บูรพา · 9 ก.ค. 69",
+          "สาขาภาษาจีน ม.บูรพา · 9 ก.ค. 69", "สาขาภาษาจีน ม.บูรพา · 9 ก.ค. 69", "บริหารธุรกิจระหว่างประเทศ ม.บูรพา · 8 ก.ย. 69"
+        ])
+      },
+      {
+        category: "Roadshow", title: "แนะแนวภาคเหนือ เชียงใหม่", subtitle: "ราชภัฏเชียงใหม่ · ม.พายัพ · ต.ค. 69",
+        images: pics("chiangmai", [
+          "ม.ราชภัฏเชียงใหม่ · 22 ต.ค. 69", "ม.พายัพ คณะบริหารธุรกิจ · 19 ต.ค. 69", "ม.พายัพ (นานาชาติ) · 19 ต.ค. 69",
+          "ม.ราชภัฏเชียงใหม่ · 22 ต.ค. 69", "ม.พายัพ คณะบริหารธุรกิจ · 19 ต.ค. 69", "ม.พายัพ (นานาชาติ) · 19 ต.ค. 69",
+          "โรงเรียนการบริบาลเชียงใหม่ · 21 ต.ค. 69"
+        ])
+      },
+      {
+        category: "Schools", title: "ความร่วมมือกับโรงเรียน", subtitle: "โครงการ 3+4 · โรงเรียนจีน",
+        images: pics("school", [
+          "โรงเรียนกวงฟูวิทยา · โครงการ 3+4 · 20 ต.ค. 69", "โรงเรียนกวงฟูวิทยา · โครงการ 3+4 · 20 ต.ค. 69",
+          "โรงเรียนชุมชนบ้านแม่สแลป (โรงเรียนจีน)", "โรงเรียนกวงฟูวิทยา · โครงการ 3+4 · 20 ต.ค. 69",
+          "โรงเรียนชุมชนบ้านแม่สแลป (โรงเรียนจีน)"
+        ])
+      },
+      {
+        category: "Scholarship", title: "มอบทุนการศึกษา", subtitle: "สนับสนุนนักศึกษา 2 ทุน",
+        images: pics("scholarship", ["มอบทุนการศึกษาแก่นักศึกษา 2 คน", "มอบทุนการศึกษาแก่นักศึกษา 2 คน"])
+      }
+    ];
+
+    (function activityAlbums() {
+      const grid = document.getElementById("album-grid");
+      const viewer = document.getElementById("album-viewer");
+      if (!grid || !viewer) return;
+      const CFG = window.WINNER_CONFIG || {};
+      const I = window.ICONS || {};
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const hint = (src) => (CFG.showImageHints ? `<span class="ps-hint">${esc(src.split("/").pop())}</span>` : "");
+      // รูปในรายการเป็นข้อความ (path) หรือ { src, caption } ก็ได้
+      const srcOf = (p) => (typeof p === "string" ? p : p.src);
+      const capOf = (p) => (typeof p === "string" ? "" : p.caption || "");
+      const thumbOf = (src) => src.replace(/\/activity\/([^/]+)$/, "/activity/thumb/$1");
+      // ใช้รูปย่อก่อน → ถ้าไม่มีใช้รูปเต็ม → ถ้าไม่มีอีกแสดงกรอบ placeholder
+      const photoHTML = (p, alt) => {
+        const src = srcOf(p);
+        return `<span class="ps-photo"><img src="${esc(thumbOf(src))}" data-full="${esc(src)}" alt="${esc(alt)}" loading="lazy" decoding="async"
+          onload="this.parentNode.classList.remove('missing')"
+          onerror="if(this.dataset.full&&this.src.indexOf('/thumb/')>-1){this.src=this.dataset.full}else{this.parentNode.classList.add('missing')}">${hint(src)}</span>`;
+      };
+
+      grid.innerHTML = ACTIVITY_ALBUMS.map((a, i) => `
+        <button type="button" class="photo-stack-card" data-album="${i}" aria-label="เปิดอัลบั้ม ${esc(a.title)} (${a.images.length} รูป)">
+          <span class="ps-text">
+            <span class="ps-cat">${esc(a.category)}</span>
+            <span class="ps-title">${esc(a.title)}</span>
+            <span class="ps-sub">${esc(a.subtitle)}</span>
+          </span>
+          <span class="ps-count">${I.camera || ""}${a.images.length} รูป</span>
+          <span class="ps-stack">${a.images.slice(0, 3).map((p, k) => photoHTML(p, `${a.title} ${k + 1}`)).join("")}</span>
+        </button>`).join("");
+
+      /* ----- Viewer ----- */
+      const img = viewer.querySelector(".av-figure img");
+      const fig = viewer.querySelector(".av-figure");
+      const thumbs = viewer.querySelector(".av-thumbs");
+      const capEl = viewer.querySelector(".av-caption");
+      viewer.querySelector(".av-close").innerHTML = I.close || "×";
+      viewer.querySelector(".av-nav.prev").innerHTML = I.chevLeft || "‹";
+      viewer.querySelector(".av-nav.next").innerHTML = I.chevRight || "›";
+      let album = null, idx = 0, lastFocus = null;
+
+      function show(n) {
+        idx = (n + album.images.length) % album.images.length;
+        const p = album.images[idx], src = srcOf(p), cap = capOf(p);
+        fig.classList.remove("missing");
+        fig.dataset.file = src.split("/").pop();
+        img.onerror = () => fig.classList.add("missing");
+        img.src = src;
+        img.alt = cap || `${album.title} รูปที่ ${idx + 1}`;
+        viewer.querySelector(".av-count").textContent = `${idx + 1} / ${album.images.length}`;
+        capEl.textContent = cap;
+        capEl.hidden = !cap;
+        // โหลดรูปถัดไปไว้ก่อน ให้กดเลื่อนแล้วขึ้นทันที
+        const next = album.images[(idx + 1) % album.images.length];
+        if (next) new Image().src = srcOf(next);
+        thumbs.querySelectorAll("button").forEach((b, k) => {
+          b.classList.toggle("on", k === idx);
+          if (k === idx) b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+        });
+      }
+      function open(i) {
+        album = ACTIVITY_ALBUMS[i];
+        lastFocus = document.activeElement;
+        viewer.querySelector(".av-cat").textContent = album.category;
+        viewer.querySelector("#av-title").textContent = album.title;
+        viewer.querySelector(".av-sub").textContent = album.subtitle;
+        thumbs.innerHTML = album.images.map((p, k) =>
+          `<button type="button" aria-label="รูปที่ ${k + 1}${capOf(p) ? ": " + esc(capOf(p)) : ""}">${photoHTML(p, "")}</button>`).join("");
+        viewer.hidden = false;
+        document.documentElement.classList.add("av-lock");
+        requestAnimationFrame(() => viewer.classList.add("open"));
+        show(0);
+        viewer.querySelector(".av-close").focus();
+      }
+      function close() {
+        viewer.classList.remove("open");
+        document.documentElement.classList.remove("av-lock");
+        setTimeout(() => { viewer.hidden = true; img.removeAttribute("src"); }, 220);
+        if (lastFocus) lastFocus.focus();
+      }
+
+      grid.addEventListener("click", (e) => {
+        const card = e.target.closest(".photo-stack-card");
+        if (card) open(+card.dataset.album);
+      });
+      viewer.addEventListener("click", (e) => {
+        if (e.target.closest("[data-av-close]")) return close();
+        if (e.target.closest(".av-nav.prev")) return show(idx - 1);
+        if (e.target.closest(".av-nav.next")) return show(idx + 1);
+        const t = e.target.closest(".av-thumbs button");
+        if (t) show([...thumbs.children].indexOf(t));
+      });
+      document.addEventListener("keydown", (e) => {
+        if (viewer.hidden) return;
+        if (e.key === "Escape") close();
+        else if (e.key === "ArrowLeft") show(idx - 1);
+        else if (e.key === "ArrowRight") show(idx + 1);
+      });
+      let x0 = null;
+      fig.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+      fig.addEventListener("touchend", (e) => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
+        x0 = null;
+      });
     })();
   </script>
 </body>
