@@ -134,6 +134,14 @@
     </div>
   </section>`;
 
+  /* Follow Us: หน้า Internship → เพจ Winner HR, หน้า Manpower → เพจ Manpower, หน้าอื่นแสดงทั้งสอง */
+  const pageFile = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const fbHr = `<a href="${C.facebookHr}" target="_blank" rel="noopener" aria-label="Facebook Winner HR International">${ICONS.like}<span>Winner HR</span></a>`;
+  const fbMp = `<a href="${C.facebookManpower}" target="_blank" rel="noopener" aria-label="Facebook Winner 96 Manpower">${ICONS.like}<span>Manpower</span></a>`;
+  const fbLinks = pageFile.startsWith("internship") ? fbHr
+    : pageFile.startsWith("job") ? fbMp
+    : fbHr + fbMp;
+
   const footer = `${licenceCard}
   <section class="cta-band">
     <div class="container">
@@ -163,10 +171,8 @@
       </div>
       <div class="footer-col">
         <h4>Follow Us</h4>
-        <div class="socials">
-          <a href="${C.facebook}" aria-label="Facebook">${ICONS.like}</a>
-          <a href="${C.instagram}" aria-label="Instagram">${ICONS.camera}</a>
-          <a href="${C.youtube}" aria-label="YouTube">${ICONS.play}</a>
+        <div class="fb-follow">
+          ${fbLinks}
         </div>
       </div>
     </div>

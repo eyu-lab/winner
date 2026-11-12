@@ -360,6 +360,11 @@ i[data-icon] { display: inline-flex; font-style: normal; }
 .socials a:hover { background: var(--navy); color: #fff; }
 .socials a:hover svg { color: #fff; }
 .socials svg { width: 17px; height: 17px; }
+.fb-follow { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.footer-col .fb-follow a { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 7px 16px 7px 10px; border-radius: 999px; background: #eef2fb; color: var(--navy); font-weight: 600; font-size: 14px; transition: background .2s, color .2s, transform .2s; }
+.fb-follow a svg { width: 18px; height: 18px; color: #1877f2; transition: color .2s, transform .25s cubic-bezier(.34,1.56,.64,1); }
+.footer-col .fb-follow a:hover { background: #1877f2; color: #fff; }
+.fb-follow a:hover svg { color: #fff; transform: scale(1.18) rotate(-8deg); }
 .copyright { background: var(--navy); color: rgba(255,255,255,.8); text-align: center; font-size: 12px; padding: 14px 0; }
 
 /* =========================================================

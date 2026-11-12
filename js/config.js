@@ -17,8 +17,8 @@ window.WINNER_CONFIG = {
     lineUrl: "https://line.me/R/ti/p/@winnerhr",
     email: "winner96mp@gmail.com",
     address: "80 K.A.N. Place, Room 104, 1st Floor,<br>Soi Narathiwarajanakarin 8,<br>Thungwatdon, Sathorn, BKK 10120",
-    facebook: "#",
-    instagram: "#",
-    youtube: "#"
+    /* Facebook แยก 2 เพจ (แสดงในส่วน Follow Us ท้ายเว็บ) */
+    facebookHr: "https://www.facebook.com/profile.php?id=61584116334081&sk=photos",
+    facebookManpower: "https://www.facebook.com/profile.php?id=61580811710779"
   }
 };
