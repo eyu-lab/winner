@@ -57,7 +57,7 @@
       document.getElementById("contact-grid").innerHTML = `
         <div class="contact-item reveal"><span class="b-icon">${ICONS.mapPin}</span><h4>ที่อยู่</h4><p>${C.address}</p></div>
         <div class="contact-item reveal"><span class="b-icon">${ICONS.phone}</span><h4>โทรศัพท์ / Line</h4>
-          <p><a href="tel:${C.hotline}">${C.hotlineDisplay}</a><br><a href="${C.lineUrl}" target="_blank" rel="noopener">Line: ${C.line}</a></p></div>
+          <p>${C.phones.map((p) => `${p.name}: <a href="tel:${p.tel}">${p.display}</a>`).join("<br>")}<br><a href="${C.lineUrl}" target="_blank" rel="noopener">Line: ${C.line}</a></p></div>
         <div class="contact-item reveal"><span class="b-icon">${ICONS.mail}</span><h4>อีเมล</h4><p><a href="mailto:${C.email}">${C.email}</a></p></div>`;
     })();
   </script>

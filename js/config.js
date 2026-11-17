@@ -8,11 +8,14 @@ window.WINNER_CONFIG = {
   formEndpoint: "https://script.google.com/macros/s/AKfycbzGaGSW4jC6zJav6lOXSyYYldEizdmboirA_zsEAgvC_zeOPAm16sLBc-XWI8Oz0kaBww/exec",
 
   /* แสดงชื่อไฟล์รูปที่ยังไม่ได้ใส่ (มุมขวาล่างของกรอบรูป) — ปิดเป็น false ก่อนขึ้นเว็บจริง */
-  showImageHints: true,
+  showImageHints: false,
 
   contact: {
-    hotline: "0890063218",
-    hotlineDisplay: "089-006-3218",
+    /* เบอร์โทรติดต่อ (แสดงทุกเบอร์ในรายการนี้: ท้ายเว็บ, หน้า About, กล่องติดต่อหน้า Internship) */
+    phones: [
+      { name: "อารีน่า (ALINA)", tel: "0649607917", display: "064-9607917" },
+      { name: "อัลเฟรด (ALFRED)", tel: "0649607827", display: "064-9607827" }
+    ],
     line: "@winnerhr",
     lineUrl: "https://line.me/R/ti/p/@winnerhr",
     email: "winner96mp@gmail.com",

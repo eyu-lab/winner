@@ -50,8 +50,10 @@
           firstBad = firstBad || el;
         } else if (file) {
           const max = parseFloat(el.dataset.maxMb || "5");
-          const okType = /\.(pdf|jpe?g|png)$/i.test(file.name);
-          if (!okType) { setInvalid(el, "รองรับเฉพาะไฟล์ PDF, JPG หรือ PNG"); firstBad = firstBad || el; }
+          // นามสกุลที่รับได้: data-ext="pdf,doc,docx" (ค่าเริ่มต้น PDF/JPG/PNG)
+          const exts = (el.dataset.ext || "pdf,jpg,jpeg,png").split(",").map((s) => s.trim().toLowerCase());
+          const okType = exts.includes((file.name.split(".").pop() || "").toLowerCase());
+          if (!okType) { setInvalid(el, "รองรับเฉพาะไฟล์ " + [...new Set(exts.map((s) => s === "jpeg" ? "jpg" : s))].join(", ").toUpperCase()); firstBad = firstBad || el; }
           else if (file.size > max * 1024 * 1024) { setInvalid(el, `ไฟล์ใหญ่เกิน ${max} MB กรุณาลดขนาดไฟล์`); firstBad = firstBad || el; }
         }
         return;
@@ -69,6 +71,10 @@
       }
       if (el.type === "tel" && !/^0\d{8,9}$/.test(v.replace(/[\s-]/g, ""))) {
         setInvalid(el, "กรุณากรอกเบอร์โทรศัพท์ 9-10 หลัก เช่น 0812345678");
+        firstBad = firstBad || el;
+      }
+      if (el.pattern && !new RegExp(el.pattern).test(v)) {
+        setInvalid(el, el.title || "รูปแบบข้อมูลไม่ถูกต้อง");
         firstBad = firstBad || el;
       }
     });
@@ -174,11 +180,22 @@
       if (!validate(form)) return;
       const btn = form.querySelector('[type="submit"]');
       const label = btn.innerHTML;
+      const card = form.closest(".form-card");
       btn.disabled = true;
-      btn.textContent = "กำลังส่งข้อมูล...";
+      btn.innerHTML = '<span class="btn-spin"></span> กำลังส่งข้อมูล...';
+      // หน้าจอ Loading ทับฟอร์ม ระหว่างอัปโหลดไฟล์/ส่งข้อมูล
+      let overlay = card.querySelector(".form-loading");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.className = "form-loading";
+        overlay.setAttribute("role", "status");
+        overlay.setAttribute("aria-live", "polite");
+        overlay.innerHTML = '<div class="form-loading-box"><span class="spin"></span><b>กำลังส่งใบสมัคร...</b><small>กรุณารอสักครู่ และอย่าปิดหน้านี้</small></div>';
+        card.appendChild(overlay);
+      }
+      card.classList.add("sending");
       try {
         const res = await send(await collect(form));
-        const card = form.closest(".form-card");
         card.classList.add("done");
         const note = card.querySelector(".demo-note");
         if (note) note.hidden = !res.demo;
@@ -188,6 +205,7 @@
         console.error(err);
         showToast("ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อทาง Line");
       } finally {
+        card.classList.remove("sending");
         btn.disabled = false;
         btn.innerHTML = label;
       }

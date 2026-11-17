@@ -17,6 +17,7 @@
     phone: p('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>'),
     chat: p('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/>'),
     mail: p('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>'),
+    facebook: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg>',
     like: p('<path d="M7 10v12"/><path d="M15 5.9 14 10h5.8a2 2 0 0 1 1.9 2.6l-2.3 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.8a2 2 0 0 0 1.8-1.1L12 2a3.1 3.1 0 0 1 3 3.9z"/>'),
     camera: p('<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>'),
     play: p('<polygon points="7 4 20 12 7 20 7 4" fill="currentColor"/>'),
@@ -136,21 +137,24 @@
 
   /* Follow Us: หน้า Internship → เพจ Winner HR, หน้า Manpower → เพจ Manpower, หน้าอื่นแสดงทั้งสอง */
   const pageFile = (location.pathname.split("/").pop() || "index.html").toLowerCase();
-  const fbHr = `<a href="${C.facebookHr}" target="_blank" rel="noopener" aria-label="Facebook Winner HR International">${ICONS.like}<span>Winner HR</span></a>`;
-  const fbMp = `<a href="${C.facebookManpower}" target="_blank" rel="noopener" aria-label="Facebook Winner 96 Manpower">${ICONS.like}<span>Manpower</span></a>`;
+  const fbHr = `<a href="${C.facebookHr}" target="_blank" rel="noopener" aria-label="Facebook Winner HR International">${ICONS.facebook}<span>Winner HR</span></a>`;
+  const fbMp = `<a href="${C.facebookManpower}" target="_blank" rel="noopener" aria-label="Facebook Winner 96 Manpower">${ICONS.facebook}<span>Manpower</span></a>`;
   const fbLinks = pageFile.startsWith("internship") ? fbHr
     : pageFile.startsWith("job") ? fbMp
     : fbHr + fbMp;
 
-  const footer = `${licenceCard}
+  const fSlot = document.getElementById("site-footer");
+  // <div id="site-footer" data-footer="simple"> → ไม่แสดงการ์ดใบอนุญาตและแถบข้อความด้านบน
+  const simpleFooter = fSlot?.dataset.footer === "simple";
+  const footer = `${simpleFooter ? "" : `${licenceCard}
   <section class="cta-band">
     <div class="container">
-      <h2>Winner HR International | เปิดประตูสู่อนาคตที่มั่นคง<br>
+      <h2>Winner International | เปิดประตูสู่อนาคตที่มั่นคง<br>
       ด้วยโอกาสฝึกงานและทำงานต่างประเทศอย่างถูกต้องตามกฎหมาย<br>
       เพราะอนาคตและความมั่นคงของเด็กไทยคือสิ่งสำคัญ</h2>
-      <p>Winner HR International พร้อมเป็นสะพานเชื่อมโอกาสสู่เวทีระดับสากล การันตีด้วยเครือข่ายพาร์ทเนอร์โรงแรมระดับ 4-5 ดาวในประเทศไต้หวัน พร้อมบริการจัดหางานและดูแลด้านแรงงานครบวงจร ให้ทุกก้าวสู่ต่างประเทศของคุณปลอดภัยและเติบโตอย่างมั่นคง</p>
+      <p>Winner International พร้อมเป็นสะพานเชื่อมโอกาสสู่เวทีระดับสากล การันตีด้วยเครือข่ายพาร์ทเนอร์โรงแรมระดับ 4-5 ดาวในประเทศไต้หวัน พร้อมบริการจัดหางานและดูแลด้านแรงงานครบวงจร ให้ทุกก้าวสู่ต่างประเทศของคุณปลอดภัยและเติบโตอย่างมั่นคง</p>
     </div>
-  </section>
+  </section>`}
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
@@ -165,7 +169,7 @@
       </div>
       <div class="footer-col">
         <h4>Contact Us</h4>
-        <a href="tel:${C.hotline}">${ICONS.phone} Hotline: ${C.hotline}</a>
+        ${(C.phones || []).map((p) => `<a href="tel:${p.tel}">${ICONS.phone} ${p.name}: ${p.display}</a>`).join("")}
         <a href="${C.lineUrl}" target="_blank" rel="noopener">${ICONS.chat} Line: ${C.line}</a>
         <a href="mailto:${C.email}">${ICONS.mail} ${C.email}</a>
       </div>
@@ -181,7 +185,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>`;
 
   const hSlot = document.getElementById("site-header");
-  const fSlot = document.getElementById("site-footer");
   if (hSlot) hSlot.outerHTML = header;
   if (fSlot) fSlot.outerHTML = footer;
 
