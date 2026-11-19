@@ -24,6 +24,10 @@
       const slug = new URLSearchParams(location.search).get("c") || "taiwan";
       const c = JOB_COUNTRIES.find((x) => x.slug === slug && x.active);
       const main = document.getElementById("country-page");
+      /* เบอร์โทร/อีเมล: ใช้ชุดเดียวกับทั้งเว็บ (แก้ที่ js/config.js → contact.phones / contact.email) */
+      const CT = WINNER_CONFIG.contact;
+      const phoneLinks = () => CT.phones.map((p) => `<a href="tel:${p.tel}">${ICONS.phone} ${p.name}: ${p.display}</a>`).join("");
+      const phoneText = CT.phones.map((p) => p.display).join(", ");
       const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
 
       if (!c) {
@@ -125,8 +129,8 @@
             <h1>เปิดรับสมัครงาน<span>ประเทศ${esc(c.nameTh)}</span></h1>
             <p class="lead">${esc(c.lead)}</p>
             <div class="contact-lines">
-              <a href="tel:${c.phone.replace(/-/g, "")}">${ICONS.phone} ติดต่อสอบถามเพิ่มเติม: ${esc(c.phone)}</a>
-              <a href="mailto:${c.email}">${ICONS.mail} อีเมลยื่นเอกสาร: ${esc(c.email)}</a>
+              ${phoneLinks()}
+              <a href="mailto:${CT.email}">${ICONS.mail} อีเมลยื่นเอกสาร: ${esc(CT.email)}</a>
             </div>
             <div class="hero-actions">
               <a href="#apply" class="btn btn-yellow">สมัครงานตอนนี้</a>
@@ -164,12 +168,12 @@ ${anns.length ? "" : `
               <ol class="steps">
                 <li><b>ลงทะเบียนสมัครงาน</b><span>กรอกฟอร์มนี้เพื่อเลือกตำแหน่ง</span></li>
                 <li><b>สัมภาษณ์ &amp; ตรวจสอบคุณสมบัติ</b><span>เจ้าหน้าที่ติดต่อกลับ</span></li>
-                <li><b>ยื่นเอกสาร &amp; ทำวีซ่าทำงาน</b><span>ส่งเอกสารทางอีเมล ${esc(c.email)}</span></li>
+                <li><b>ยื่นเอกสาร &amp; ทำวีซ่าทำงาน</b><span>ส่งเอกสารทางอีเมล ${esc(CT.email)}</span></li>
                 <li><b>อบรมก่อนเดินทาง &amp; บินไปทำงาน</b><span>มีทีมดูแลตลอดสัญญาจ้าง</span></li>
               </ol>
               <div class="aside-contact">
-                <a href="tel:${c.phone.replace(/-/g, "")}">${ICONS.phone} ${esc(c.phone)}</a>
-                <a href="mailto:${c.email}">${ICONS.mail} ${esc(c.email)}</a>
+                ${phoneLinks()}
+                <a href="mailto:${CT.email}">${ICONS.mail} ${esc(CT.email)}</a>
               </div>
             </aside>
             <div class="form-card reveal">
@@ -235,7 +239,7 @@ ${expBlock("ต่างประเทศ", "abroad", 6)}
               <div class="form-success" role="status">
                 <div class="ok">${ICONS.check}</div>
                 <h3>ส่งใบสมัครเรียบร้อยแล้ว!</h3>
-                <p>ทีมงาน Winner 96 จะติดต่อกลับโดยเร็วที่สุด<br>สอบถามเพิ่มเติม โทร ${esc(c.phone)}</p>
+                <p>ทีมงาน Winner 96 จะติดต่อกลับโดยเร็วที่สุด<br>สอบถามเพิ่มเติม โทร ${esc(phoneText)}</p>
                 <div style="margin-top:20px"><button type="button" class="btn btn-yellow" data-form-again>สมัครอีกตำแหน่ง</button></div>
               </div>
             </div>
@@ -288,7 +292,7 @@ ${expBlock("ต่างประเทศ", "abroad", 6)}
           v.classList.toggle("is-closed", closed);
           note.innerHTML = closed
             ? `ประกาศนี้<b>หมดเขตรับสมัครแล้ว</b> · <a href="#apply" data-av-close>ลงทะเบียนความสนใจไว้ก่อน</a> เพื่อรับแจ้งเมื่อเปิดรอบใหม่`
-            : `<a href="#apply" class="ann-apply" data-ann-apply="${idx}">สมัครตำแหน่งนี้ ${ICONS.arrowRight || "→"}</a><span class="ann-viewer-tel">หรือโทร ${esc(c.phone)}</span>`;
+            : `<a href="#apply" class="ann-apply" data-ann-apply="${idx}">สมัครตำแหน่งนี้ ${ICONS.arrowRight || "→"}</a><span class="ann-viewer-tel">หรือโทร ${esc(phoneText)}</span>`;
           thumbs.querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === idx));
         };
         const open = (i) => {

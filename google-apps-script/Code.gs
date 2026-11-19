@@ -10,7 +10,7 @@
  * 4. กด Deploy → อนุญาตสิทธิ์ → คัดลอก "Web app URL"
  * 5. นำ URL ไปใส่ใน js/config.js → formEndpoint: "https://script.google.com/macros/s/....../exec"
  *
- * ข้อมูลจะแยกเป็น 2 แท็บอัตโนมัติ: "Internship" และ "Manpower"
+ * ข้อมูลจะแยกเป็นแท็บอัตโนมัติ: "Internship", "Manpower" และ "Employer" (คำขอจากนายจ้าง)
  * หัวคอลัมน์จะสร้างเองตามชื่อช่องในฟอร์ม (เพิ่มช่องใหม่ในฟอร์มได้เลย ไม่ต้องแก้สคริปต์)
  *
  * ไฟล์แนบ (เช่น ผลสอบภาษา) จะถูกเก็บในโฟลเดอร์ "Winner - ไฟล์แนบผู้สมัคร" ใน Google Drive
@@ -39,7 +39,7 @@
  */
 const NOTIFY_EMAIL = ""; // เช่น "winner96mp@gmail.com"
 
-const SHEET_NAMES = { internship: "Internship", job: "Manpower" };
+const SHEET_NAMES = { internship: "Internship", job: "Manpower", employer: "Employer" }; // Employer = คำขอจากนายจ้าง (หน้า employers.html)
 const LEGACY_SHEET_NAMES = { job: "Job" }; // ชื่อแท็บเดิม — ถ้ายังมีอยู่จะถูกเปลี่ยนชื่อเป็นชื่อใหม่ให้อัตโนมัติ (ข้อมูลเดิมไม่หาย)
 
 /** ▶ ฟังก์ชันแรกในไฟล์ = ตัวที่ปุ่ม Run เลือกไว้ให้ — กด Run 1 ครั้งเพื่ออนุญาตสิทธิ์ Google Drive / Docs
@@ -56,9 +56,10 @@ function authorizeDrive() {
 /** หาประเภทฟอร์ม: จาก formType ก่อน ถ้าไม่รู้จักให้ดูจากหน้าเว็บที่ส่งมา */
 function detectType(rawType, data) {
   const t = String(rawType || "").toLowerCase().trim();
-  const ALIASES = { job: "job", manpower: "job", internship: "internship" };
+  const ALIASES = { job: "job", manpower: "job", internship: "internship", employer: "employer", employers: "employer" };
   if (ALIASES[t]) return ALIASES[t];
   const page = String((data || {})["หน้าเว็บ"] || "");
+  if (/^employer/i.test(page)) return "employer";
   if (/^job/i.test(page)) return "job";
   if (/^internship/i.test(page)) return "internship";
   return "other";
@@ -407,7 +408,7 @@ function getUploadFolder() {
 
 /** เปิด URL /exec ในเบราว์เซอร์เพื่อตรวจว่าโค้ดเวอร์ชันไหน deploy อยู่ (ไม่บันทึกอะไรลงชีต)
  *  เติม ?formType=job ท้าย URL เพื่อดูว่าใบสมัครประเภทนั้นจะไปลงแท็บไหน */
-const CODE_VERSION = "2026-11-16 internship-pdf-v2";
+const CODE_VERSION = "2026-11-19 employer-v1";
 
 function doGet(e) {
   const p = (e && e.parameter) || {};

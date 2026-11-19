@@ -59,6 +59,7 @@
   const page = body.dataset.page || "";
   const brand = body.dataset.brand || "none";
   const params = new URLSearchParams(location.search);
+  const pageFile = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
   const LOGOS = {
     hr: { src: "assets/logo-winner-hr.jpg", alt: "Winner HR International Co.,Ltd", home: "internship.html" },
@@ -76,7 +77,10 @@
         ? `<a href="job-country.html?c=${c.slug}" class="${current === c.slug ? "current" : ""}"><img class="flag" src="${flagUrl(c.flag, 40)}" alt="">${c.nameTh} <span style="color:var(--muted);font-size:12px">(${c.nameEn})</span></a>`
         : `<span class="disabled"><img class="flag" src="${flagUrl(c.flag, 40)}" alt="" style="opacity:.5">${c.nameTh} — เร็วๆ นี้</span>`
     ).join("");
-    return `<div class="dd-label">เลือกประเทศ</div>${items}<hr><a href="job.html">ดูทุกประเทศ</a>`;
+    const onEmp = pageFile.startsWith("employers");
+    return `<div class="dd-label">เลือกประเทศ</div>${items}<hr><a href="job.html">ดูทุกประเทศ</a>
+      <hr><div class="dd-label">For Employers</div>
+      <a href="employers.html" class="${onEmp ? "current" : ""}">${ICONS.briefcase.replace("<svg", '<svg class="flag" style="padding:2px;color:var(--navy)"')}สำหรับนายจ้าง <span style="color:var(--muted);font-size:12px">(Employers)</span></a>`;
   }
 
   const searchForm = (cls) => `
@@ -136,11 +140,10 @@
   </section>`;
 
   /* Follow Us: หน้า Internship → เพจ Winner HR, หน้า Manpower → เพจ Manpower, หน้าอื่นแสดงทั้งสอง */
-  const pageFile = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const fbHr = `<a href="${C.facebookHr}" target="_blank" rel="noopener" aria-label="Facebook Winner HR International">${ICONS.facebook}<span>Winner HR</span></a>`;
   const fbMp = `<a href="${C.facebookManpower}" target="_blank" rel="noopener" aria-label="Facebook Winner 96 Manpower">${ICONS.facebook}<span>Manpower</span></a>`;
   const fbLinks = pageFile.startsWith("internship") ? fbHr
-    : pageFile.startsWith("job") ? fbMp
+    : (pageFile.startsWith("job") || pageFile.startsWith("employers")) ? fbMp
     : fbHr + fbMp;
 
   const fSlot = document.getElementById("site-footer");

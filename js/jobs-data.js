@@ -21,8 +21,6 @@ window.JOB_COUNTRIES = [
     region: "เอเชีย",
     heroImage: "assets/images/job-taiwan-hero.jpg",
     lead: "โอกาสทำงานในไต้หวันกับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
-    phone: "064-960-7187",
-    email: "winner96group@gmail.com",
     // ใบประกาศรับสมัคร (แสดงใต้แบนเนอร์) — status: "open" = เปิดรับ, "closed" = หมดเขตรับสมัครแล้ว
     announcements: [
       { image: "assets/images/announce/taiwan-paper-factory.jpg", title: "งานโรงงานกระดาษ ไต้หวัน", detail: "เงินเดือนเริ่มต้น 29,500 TWD · มี OT ทุกวัน", status: "closed" },
@@ -42,8 +40,6 @@ window.JOB_COUNTRIES = [
     region: "เอเชีย",
     heroImage: "assets/images/job-singapore-hero.jpg",
     lead: "โอกาสทำงานในสิงคโปร์กับนายจ้างที่ผ่านการตรวจสอบ สัญญาจ้างถูกต้องตามกฎหมายแรงงาน ดูแลครบทุกขั้นตอนตั้งแต่สมัครจนถึงวันเดินทาง",
-    phone: "064-960-7187",
-    email: "winner96group@gmail.com",
     announcements: [
       { image: "assets/images/announce/singapore-construction.jpg", title: "นายจ้างรับตรง งานก่อสร้าง สิงคโปร์", detail: "รายได้ไม่ต่ำกว่า 40,000 บาท · ช่างไม้ ช่างผูกเหล็ก ช่างคอนกรีต", status: "closed" }
     ],
@@ -61,8 +57,6 @@ window.JOB_COUNTRIES = [
     region: "ยุโรป",
     heroImage: "assets/images/job-albania-hero.jpg",
     lead: "โอกาสสร้างรายได้สูงและใช้ชีวิตในยุโรปอย่างมั่นคง กับเครือข่ายพาร์ทเนอร์นายจ้างที่ได้มาตรฐาน สัญญาจ้างถูกต้องตามกฎหมายแรงงาน",
-    phone: "064-960-7187",
-    email: "winner96group@gmail.com",
     positions: [
       { th: "เชฟ อาหารเมดิเตอร์เรเนียน", en: "Chef", gender: "ชาย", age: "30–45 ปี", salary: "76,000 - 114,000", hot: true },
       { th: "กุ๊ก / ผู้ช่วยครัว", en: "Cook", gender: "หญิง", age: "25–40 ปี", salary: "26,800 - 30,650" },
@@ -92,7 +86,7 @@ window.JOB_COUNTRIES = [
   /* ตัวอย่างประเทศถัดไป (ยังไม่เปิด) — เอา comment ออกเมื่อพร้อม
   ,{
     slug: "poland", active: false, nameTh: "โปแลนด์", nameEn: "Poland", flag: "pl", region: "ยุโรป",
-    heroImage: "assets/images/job-poland-hero.jpg", lead: "", phone: "064-960-7187", email: "winner96group@gmail.com",
+    heroImage: "assets/images/job-poland-hero.jpg", lead: "",
     positions: [], benefits: []
   }
   */

@@ -1,11 +1,18 @@
 /* =========================================================
    WINNER — application forms
-   <form data-form="internship|job"> ... </form>
+   <form data-form="internship|job|employer" [data-lang="en"]> ... </form>
    ส่งข้อมูลไปที่ WINNER_CONFIG.formEndpoint (Google Apps Script)
    ========================================================= */
 (function () {
   "use strict";
   const CFG = window.WINNER_CONFIG || {};
+
+  /* ข้อความแจ้งเตือน: ไทย (ค่าเริ่มต้น) / อังกฤษ (<form data-lang="en">) */
+  const MSG = {
+    th: { required: "กรุณากรอกข้อมูลช่องนี้", choose: "กรุณาเลือกอย่างน้อย 1 ตัวเลือก", consent: "กรุณายอมรับเงื่อนไขการเก็บข้อมูลส่วนบุคคล", file: "กรุณาแนบไฟล์", fileType: "รองรับเฉพาะไฟล์ ", fileSize: (m) => `ไฟล์ใหญ่เกิน ${m} MB กรุณาลดขนาดไฟล์`, email: "รูปแบบอีเมลไม่ถูกต้อง", tel: "กรุณากรอกเบอร์โทรศัพท์ 9-10 หลัก เช่น 0812345678", pattern: "รูปแบบข้อมูลไม่ถูกต้อง", sending: "กำลังส่งข้อมูล...", overlay: "กำลังส่งใบสมัคร...", wait: "กรุณารอสักครู่ และอย่าปิดหน้านี้", fail: "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อทาง Line" },
+    en: { required: "Please fill in this field", choose: "Please choose at least one option", consent: "Please accept the data consent to continue", file: "Please attach a file", fileType: "Accepted file types: ", fileSize: (m) => `File is larger than ${m} MB`, email: "Please enter a valid email address", tel: "Please enter a valid phone number, e.g. +886 912 345 678", pattern: "Invalid format", sending: "Sending...", overlay: "Sending your request...", wait: "Please wait and keep this page open", fail: "Could not send. Please try again or email us." }
+  };
+  const msgs = (form) => MSG[form.dataset.lang === "en" ? "en" : "th"];
 
   function setInvalid(field, msg) {
     const wrap = field.closest(".field");
@@ -27,6 +34,8 @@
 
   function validate(form) {
     let firstBad = null;
+    const M = msgs(form);
+    const en = form.dataset.lang === "en";
     form.querySelectorAll(".field.invalid").forEach((f) => f.classList.remove("invalid"));
     const checkedGroups = new Set();
 
@@ -37,8 +46,8 @@
         checkedGroups.add(el.name);
         if (!form.querySelector(`[name="${CSS.escape(el.name)}"]:checked`)) {
           if (el.type === "checkbox" && el.closest(".consent")) {
-            showToast("กรุณายอมรับเงื่อนไขการเก็บข้อมูลส่วนบุคคล");
-          } else setInvalid(el, "กรุณาเลือกอย่างน้อย 1 ตัวเลือก");
+            showToast(M.consent);
+          } else setInvalid(el, M.choose);
           firstBad = firstBad || el;
         }
         return;
@@ -46,35 +55,37 @@
       if (el.type === "file") {
         const file = el.files[0];
         if (el.required && !file) {
-          setInvalid(el, "กรุณาแนบไฟล์");
+          setInvalid(el, M.file);
           firstBad = firstBad || el;
         } else if (file) {
           const max = parseFloat(el.dataset.maxMb || "5");
           // นามสกุลที่รับได้: data-ext="pdf,doc,docx" (ค่าเริ่มต้น PDF/JPG/PNG)
           const exts = (el.dataset.ext || "pdf,jpg,jpeg,png").split(",").map((s) => s.trim().toLowerCase());
           const okType = exts.includes((file.name.split(".").pop() || "").toLowerCase());
-          if (!okType) { setInvalid(el, "รองรับเฉพาะไฟล์ " + [...new Set(exts.map((s) => s === "jpeg" ? "jpg" : s))].join(", ").toUpperCase()); firstBad = firstBad || el; }
-          else if (file.size > max * 1024 * 1024) { setInvalid(el, `ไฟล์ใหญ่เกิน ${max} MB กรุณาลดขนาดไฟล์`); firstBad = firstBad || el; }
+          if (!okType) { setInvalid(el, M.fileType + [...new Set(exts.map((s) => s === "jpeg" ? "jpg" : s))].join(", ").toUpperCase()); firstBad = firstBad || el; }
+          else if (file.size > max * 1024 * 1024) { setInvalid(el, M.fileSize(max)); firstBad = firstBad || el; }
         }
         return;
       }
       const v = (el.value || "").trim();
       if (el.required && !v) {
-        setInvalid(el, "กรุณากรอกข้อมูลช่องนี้");
+        setInvalid(el, M.required);
         firstBad = firstBad || el;
         return;
       }
       if (!v) return;
       if (el.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
-        setInvalid(el, "รูปแบบอีเมลไม่ถูกต้อง");
+        setInvalid(el, M.email);
         firstBad = firstBad || el;
       }
-      if (el.type === "tel" && !/^0\d{8,9}$/.test(v.replace(/[\s-]/g, ""))) {
-        setInvalid(el, "กรุณากรอกเบอร์โทรศัพท์ 9-10 หลัก เช่น 0812345678");
+      // เบอร์ไทย 0xxxxxxxxx · ฟอร์มภาษาอังกฤษรับเบอร์ต่างประเทศ (+ รหัสประเทศ)
+      const telOk = en ? /^\+?\d{7,15}$/.test(v.replace(/[\s().-]/g, "")) : /^0\d{8,9}$/.test(v.replace(/[\s-]/g, ""));
+      if (el.type === "tel" && !telOk) {
+        setInvalid(el, M.tel);
         firstBad = firstBad || el;
       }
       if (el.pattern && !new RegExp(el.pattern).test(v)) {
-        setInvalid(el, el.title || "รูปแบบข้อมูลไม่ถูกต้อง");
+        setInvalid(el, el.title || M.pattern);
         firstBad = firstBad || el;
       }
     });
@@ -146,7 +157,7 @@
     const input = drop.querySelector('input[type="file"]');
     const f = input.files[0];
     const size = f && (f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${(f.size / 1048576).toFixed(1)} MB`);
-    drop.querySelector(".file-name").textContent = f ? `${f.name} (${size})` : EMPTY_FILE_TEXT;
+    drop.querySelector(".file-name").textContent = f ? `${f.name} (${size})` : (drop.dataset.empty || EMPTY_FILE_TEXT);
     drop.classList.toggle("has-file", !!f);
   }
   document.addEventListener("change", (e) => {
@@ -181,8 +192,9 @@
       const btn = form.querySelector('[type="submit"]');
       const label = btn.innerHTML;
       const card = form.closest(".form-card");
+      const M = msgs(form);
       btn.disabled = true;
-      btn.innerHTML = '<span class="btn-spin"></span> กำลังส่งข้อมูล...';
+      btn.innerHTML = `<span class="btn-spin"></span> ${M.sending}`;
       // หน้าจอ Loading ทับฟอร์ม ระหว่างอัปโหลดไฟล์/ส่งข้อมูล
       let overlay = card.querySelector(".form-loading");
       if (!overlay) {
@@ -190,7 +202,7 @@
         overlay.className = "form-loading";
         overlay.setAttribute("role", "status");
         overlay.setAttribute("aria-live", "polite");
-        overlay.innerHTML = '<div class="form-loading-box"><span class="spin"></span><b>กำลังส่งใบสมัคร...</b><small>กรุณารอสักครู่ และอย่าปิดหน้านี้</small></div>';
+        overlay.innerHTML = `<div class="form-loading-box"><span class="spin"></span><b>${M.overlay}</b><small>${M.wait}</small></div>`;
         card.appendChild(overlay);
       }
       card.classList.add("sending");
@@ -203,7 +215,7 @@
         form.reset();
       } catch (err) {
         console.error(err);
-        showToast("ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อทาง Line");
+        showToast(M.fail);
       } finally {
         card.classList.remove("sending");
         btn.disabled = false;
