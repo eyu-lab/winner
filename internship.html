@@ -16,9 +16,9 @@
   <main>
     <!-- ===== Taiwan banner (รูปเดียว แสดงเต็มรูปไม่ครอป · พื้นหลังเป็นรูปเดียวกันแบบเบลอ) ===== -->
     <section class="tw-banner" aria-label="Taiwan">
-      <div class="tw-banner-bg" style="background-image:url('assets/images/banner-internship.jpg')" aria-hidden="true"></div>
-      <img src="assets/images/banner-internship.jpg" width="940" height="610"
-        alt="Let's Study &amp; Travel in TAIWAN — วัดไต้หวัน อนุสรณ์สถานเจียงไคเชก โคมไฟแดงจิ่วเฟิ่น อาหารริมทาง และตึกไทเป 101 ยามค่ำคืน">
+      <div class="tw-banner-bg" style="background-image:url('assets/images/banner-internship.jpg')" data-bg-en="assets/images/banner-hr-en.webp" aria-hidden="true"></div>
+      <img src="assets/images/banner-internship.jpg" data-src-en="assets/images/banner-hr-en.webp" data-alt-en="Winner HR International — Overseas Internship Program, Taiwan: international experience, real work experience, skills development, a brighter future" width="2057" height="764"
+        alt="Winner HR International — โครงการฝึกงานต่างประเทศ ไต้หวัน: ประสบการณ์ระดับสากล เรียนรู้งานจริงในสถานประกอบการ พัฒนาทักษะวิชาชีพ ก้าวสู่อนาคตในระดับนานาชาติ">
     </section>
 
     <!-- ===== โครงการฝึกงานโรงแรม + รายละเอียดโปรแกรม (รวมเป็นส่วนเดียว) ===== -->
@@ -389,7 +389,7 @@
             <div class="form-success" role="status">
               <div class="ok" data-icon="check"></div>
               <h3>ส่งข้อมูลเรียบร้อยแล้ว!</h3>
-              <p>ขอบคุณที่สนใจโครงการฝึกงานไต้หวัน ทีมงานจะติดต่อกลับภายใน 1-2 วันทำการ<br>หากต้องการคำตอบเร็วขึ้น ทัก Line: <b>@winnerhr</b></p>
+              <p>ขอบคุณที่สนใจโครงการฝึกงานไต้หวัน ทีมงานจะติดต่อกลับภายใน 1-2 วันทำการ<br>หากต้องการคำตอบเร็วขึ้น โทร 064-9607917 หรือ 064-9607827</p>
               <div style="margin-top:20px"><button type="button" class="btn btn-yellow" data-form-again>ลงทะเบียนอีกครั้ง</button></div>
             </div>
           </div>
@@ -416,6 +416,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/jobs-data.js"></script>
+  <script src="js/i18n-en.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/thai-date.js"></script>
   <script src="js/forms.js"></script>
@@ -424,7 +425,6 @@
       const C = WINNER_CONFIG.contact;
       document.getElementById("aside-contact").innerHTML = `
         ${C.phones.map((p) => `<a href="tel:${p.tel}">${ICONS.phone} ${p.name}: ${p.display}</a>`).join("")}
-        <a href="${C.lineUrl}" target="_blank" rel="noopener">${ICONS.chat} Line: ${C.line}</a>
         <a href="mailto:${C.email}">${ICONS.mail} ${C.email}</a>`;
 
       /* Gallery: บนคอมขยายเมื่อ hover (มีหน่วงสั้นๆ กันกระพริบตอนลากเมาส์ผ่าน), มือถือแตะเพื่อขยาย */

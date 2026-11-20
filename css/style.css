@@ -92,6 +92,20 @@ button, input, select, textarea { font: inherit; }
 .main-nav > a, .nav-dropdown { position: relative; }
 .main-nav > a:hover, .nav-dropdown > .nav-link:hover, .main-nav .active { color: var(--blue); }
 .main-nav .active { font-weight: 600; }
+/* เมนูนายจ้าง: ปุ่มสีม่วงแยกจากเมนูอื่น */
+.main-nav > a.nav-emp {
+  margin-left: 14px; padding: 6px 16px 6px 6px; gap: 8px; border-radius: 999px;
+  background: #efeafe; color: #5b3ad6; font-weight: 600;
+  transition: background .2s, color .2s;
+}
+.main-nav > a.nav-emp::before { display: none; }
+.nav-emp-ic {
+  width: 26px; height: 26px; border-radius: 50%; flex: none;
+  display: grid; place-items: center; background: #5b3ad6; color: #fff;
+}
+.nav-emp-ic svg { width: 14px; height: 14px; }
+.main-nav > a.nav-emp:hover, .main-nav > a.nav-emp.active { background: #5b3ad6; color: #fff; }
+.main-nav > a.nav-emp:hover .nav-emp-ic, .main-nav > a.nav-emp.active .nav-emp-ic { background: #fff; color: #5b3ad6; }
 .nav-dropdown .chev { width: 12px; height: 12px; transition: transform .2s; }
 .dropdown-menu {
   position: absolute; top: calc(100% + 6px); left: 50%; transform: translate(-50%, 6px);
@@ -114,6 +128,17 @@ button, input, select, textarea { font: inherit; }
 .dropdown-menu .dd-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--muted); padding: 6px 12px 4px; text-transform: uppercase; }
 .dropdown-menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
 
+/* ส่วนขวาของแถบหัว: ปุ่มภาษา + ช่องค้นหา */
+.header-tools { justify-self: end; display: flex; align-items: center; gap: 12px; }
+.lang-switch {
+  display: inline-flex; padding: 3px; border-radius: 999px; background: #eef1f8; border: 1px solid var(--line);
+}
+.lang-switch button {
+  border: 0; background: transparent; cursor: pointer; padding: 5px 10px; border-radius: 999px;
+  font: 600 12px/1 inherit; font-family: inherit; letter-spacing: .04em; color: #6b7389; transition: background .2s, color .2s;
+}
+.lang-switch button:hover { color: var(--navy); }
+.lang-switch button.on { background: var(--navy); color: #fff; }
 .search {
   justify-self: end; display: flex; align-items: center;
   background: var(--yellow); border-radius: 999px; padding: 4px 6px 4px 16px; width: 170px;
@@ -152,6 +177,28 @@ button, input, select, textarea { font: inherit; }
   background: rgba(0,0,0,.45); color: #fff; opacity: .75; pointer-events: none;
 }
 .media.has-img .img-hint { display: none; }
+
+/* ---------- Animated loading skeleton ----------
+   .media → <span class="sk"> (สร้างโดย initMedia) ทับกรอบระหว่างโหลด แล้วจางหาย
+   .ps-photo / .ann-slide → แถบแสงอยู่ใต้ <img> รูปโหลดเสร็จก็บังแถบเอง */
+@keyframes sk-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.sk {
+  position: absolute; inset: 0; z-index: 6; overflow: hidden; pointer-events: none;
+  background: #e6ebf5; transition: opacity .4s ease;
+}
+.sk::after, .ps-photo::before, .ann-slide::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .65) 50%, transparent 80%);
+  animation: sk-shimmer 1.3s ease-in-out infinite;
+}
+.media:not(.is-loading) > .sk { opacity: 0; }
+.ps-photo::before { z-index: 0; }
+.ps-photo.missing::before { display: none; }
+body .ann-slide { background: #dfe5f2; }
+.ann-slide::before { z-index: -1; }
+@media (prefers-reduced-motion: reduce) {
+  .sk::after, .ps-photo::before, .ann-slide::before { animation-duration: 2.6s; }
+}
 
 /* =========================================================
    Hero carousel (home)
@@ -209,7 +256,7 @@ i[data-icon] { display: inline-flex; font-style: normal; }
    Intro + category cards
    ========================================================= */
 .intro-title { font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; max-width: 900px; margin: 0 auto; }
-.intro-quote { color: #4b5263; max-width: 720px; margin: 18px auto 0; font-size: 15px; }
+.intro-quote { color: #4b5263; max-width: 750px; margin: 18px auto 0; font-size: 15px; }
 
 .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .cat-card {
@@ -343,16 +390,20 @@ i[data-icon] { display: inline-flex; font-style: normal; }
     radial-gradient(circle at 85% 20%, rgba(255,255,255,.06), transparent 40%),
     radial-gradient(circle at 10% 90%, rgba(255,255,255,.05), transparent 35%),
     var(--navy);
-  color: #fff; padding: 80px 0;
+  color: #fff; padding: 44px 0; text-align: center;
 }
-.cta-band h2 { color: #fff; font-size: clamp(18px, 2vw, 24px); font-weight: 500; line-height: 1.55; }
-.cta-band p { margin-top: 26px; font-size: 14px; color: rgba(255,255,255,.85); max-width: 880px; }
+.cta-kicker { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--yellow); }
+.cta-band h2 { color: #fff; margin-top: 8px; font-size: clamp(20px, 2.2vw, 26px); font-weight: 600; line-height: 1.4; }
+.cta-band p { margin: 10px auto 0; font-size: 15px; color: rgba(255,255,255,.85); max-width: 640px; }
+@media (max-width: 640px) { .cta-band { padding: 32px 0; } }
 
 .site-footer { background: var(--bg-soft); padding: 40px 0 0; border-top: 1px solid var(--line); }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 36px; }
 .footer-brand img { height: 50px; width: auto; margin-bottom: 14px; }
 .footer-brand .footer-name { font-weight: 600; color: var(--navy); font-size: 15px; margin-bottom: 10px; }
 .footer-brand p { font-size: 12.5px; color: #4b5263; }
+.footer-addr + .footer-addr { margin-top: 14px; }
+.footer-brand .footer-addr .footer-name { font-size: 13.5px; margin-bottom: 4px; }
 .footer-col h4 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
 .footer-col a, .footer-col li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #4b5263; margin-bottom: 10px; }
 .footer-col a:hover { color: var(--navy); }
@@ -700,7 +751,7 @@ input.auto-calc { background: #f4f6fa; color: var(--navy); font-weight: 600; cur
 .brand-card p { color: #4b5263; font-size: 14.5px; }
 .brand-card ul { margin: 0; padding-left: 18px; color: #4b5263; font-size: 14px; }
 .brand-card .btn { align-self: flex-start; margin-top: auto; }
-.contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 920px; margin-inline: auto; }
 .contact-item { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; text-align: center; box-shadow: 0 2px 10px rgba(11,47,134,.04); }
 .contact-item .b-icon { width: 44px; height: 44px; border-radius: 50%; background: #eef3ff; color: var(--navy); display: grid; place-items: center; margin: 0 auto 12px; }
 .contact-item .b-icon svg { width: 20px; height: 20px; }
@@ -729,6 +780,8 @@ input.auto-calc { background: #f4f6fa; color: var(--navy); font-weight: 600; cur
   .header-inner { grid-template-columns: auto 1fr auto; min-height: 64px; }
   .brand img { height: 44px; }
   .nav-toggle { display: grid; place-items: center; grid-column: 3; }
+  .header-tools { grid-column: 2; grid-row: 1; }
+  .header-tools .search { display: none; }
   .search { display: none; }
   .main-nav {
     position: fixed; top: 64px; left: 0; right: 0; bottom: 0; height: calc(100dvh - 64px); z-index: 49;
@@ -741,6 +794,8 @@ input.auto-calc { background: #f4f6fa; color: var(--navy); font-weight: 600; cur
   .main-nav > * + *::before { display: none; }
   .main-nav > a, .nav-dropdown > .nav-link { padding: 16px 6px; border-bottom: 1px solid var(--line); width: 100%; justify-content: space-between; font-size: 15px; }
   .main-nav > a.active, .nav-dropdown > .nav-link.active { color: var(--navy); box-shadow: inset 3px 0 0 var(--yellow); padding-left: 14px; }
+  .main-nav > a.nav-emp { margin: 14px 0 0; padding: 10px 14px 10px 10px; justify-content: flex-start; border-bottom: 0; box-shadow: none; }
+  .main-nav > a.nav-emp.active { padding-left: 10px; color: #fff; }
   .dropdown-menu { position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: 0; border-radius: 10px; background: var(--bg-soft); margin: 6px 0 4px; padding: 6px; display: none; min-width: 0; }
   .dropdown-menu a, .dropdown-menu .disabled { padding: 11px 12px; }
   .nav-dropdown.open .dropdown-menu { display: block; transform: none; }
@@ -882,18 +937,14 @@ input.auto-calc { background: #f4f6fa; color: var(--navy); font-weight: 600; cur
 .test-add[hidden], .test-remove[hidden] { display: none; }
 
 /* Internship banner: full image (no crop), blurred copy fills the sides on wide screens */
-.tw-banner { position: relative; overflow: hidden; display: flex; justify-content: center; background: var(--navy-900); }
+/* เหมือนแบนเนอร์ Winner HR หน้า Home: กรอบ 970:250 (มือถือ 2.6) แสดงรูปเต็มไม่ครอป + ขอบเบลอเติมด้านข้าง */
+.tw-banner { position: relative; overflow: hidden; aspect-ratio: 970 / 250; background: var(--navy-900); }
 .tw-banner-bg {
-  position: absolute; inset: -40px; background-position: center; background-size: cover;
-  filter: blur(28px) brightness(.55) saturate(1.2);
+  position: absolute; inset: -30px; background-position: center; background-size: cover;
+  filter: blur(24px) brightness(.85);
 }
-/* กรอบขนาดเดิม (กว้างสุด 1440 × สูง 560) แต่รูปไม่ถูกยืด: object-fit contain แสดงรูปตามสัดส่วนจริง
-   ที่ความสูง 560px รูปกว้าง ~863px (ต้นฉบับ 940×610) จึงไม่ถูกขยายเกินขนาดจริง → คมชัด */
-.tw-banner img {
-  position: relative; display: block; width: 100%; max-width: 1440px; height: 560px;
-  object-fit: contain; filter: drop-shadow(0 16px 40px rgba(0,0,0,.4));
-}
-@media (max-width: 900px) { .tw-banner { padding: 0; } .tw-banner img { height: auto; filter: none; } }
+.tw-banner img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+@media (max-width: 640px) { .tw-banner { aspect-ratio: 2.6; } }
 
 /* Banners with real images: keep the image's own proportions so baked-in text is never cropped */
 .slide { aspect-ratio: 970 / 250; min-height: 0; }

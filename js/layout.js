@@ -61,6 +61,62 @@
   const params = new URLSearchParams(location.search);
   const pageFile = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
+  /* ที่อยู่บริษัท (js/config.js → contact.addresses) · ลงคำแปลอังกฤษให้ปุ่ม EN */
+  const ADDR = C.addresses || {};
+  window.WINNER_I18N?.add(Object.fromEntries(Object.values(ADDR).map((a) => [a.th, a.en])));
+
+  /* ---------- ภาษา (TH / EN) ----------
+     จำค่าที่เลือกไว้ใน browser · ตอนนี้เปลี่ยนรูปแบนเนอร์:
+     .media[data-img-en] → ใช้ data-img-en แทน data-img · <img data-src-en> · [data-bg-en] (พื้นหลังเบลอ) */
+  const LANG_KEY = "winner_lang";
+  let lang = "th";
+  try { if (localStorage.getItem(LANG_KEY) === "en") lang = "en"; } catch (_) { /* storage blocked */ }
+  window.getLang = () => lang;
+  function applyLangImages(root = document) {
+    const en = lang === "en";
+    root.querySelectorAll(".media[data-img-en]").forEach((el) => {
+      if (!el.dataset.imgTh) el.dataset.imgTh = el.dataset.img;
+      const want = en ? el.dataset.imgEn : el.dataset.imgTh;
+      if (el.dataset.img === want) return;
+      el.dataset.img = want;
+      if (el.dataset.ready) { // โหลดรูปไปแล้ว → ล้างแล้วโหลดใหม่
+        delete el.dataset.ready;
+        el.classList.remove("has-img");
+        el.style.removeProperty("--img");
+        el.querySelectorAll(".img-hint, .sk").forEach((n) => n.remove());
+        initMedia(el.parentNode);
+      }
+    });
+    root.querySelectorAll("img[data-src-en]").forEach((img) => {
+      if (!img.dataset.srcTh) img.dataset.srcTh = img.getAttribute("src");
+      img.src = en ? img.dataset.srcEn : img.dataset.srcTh;
+      if (img.dataset.altEn) {
+        if (!img.dataset.altTh) img.dataset.altTh = img.alt;
+        img.alt = en ? img.dataset.altEn : img.dataset.altTh;
+      }
+    });
+    root.querySelectorAll("[data-bg-en]").forEach((el) => {
+      if (!el.dataset.bgTh) el.dataset.bgTh = el.style.backgroundImage;
+      el.style.backgroundImage = en ? `url("${el.dataset.bgEn}")` : el.dataset.bgTh;
+    });
+  }
+  function setLang(next) {
+    lang = next === "en" ? "en" : "th";
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) { /* storage blocked */ }
+    document.querySelectorAll(".lang-switch button").forEach((b) => {
+      const on = b.dataset.lang === lang;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on);
+    });
+    applyLangImages();
+    window.WINNER_I18N?.apply(lang); // แปลข้อความ (js/i18n-en.js)
+  }
+  const langSwitch = `
+    <div class="lang-switch" role="group" aria-label="เลือกภาษา / Language">
+      <button type="button" data-lang="th" class="${lang === "th" ? "on" : ""}" aria-pressed="${lang === "th"}">TH</button>
+      <button type="button" data-lang="en" class="${lang === "en" ? "on" : ""}" aria-pressed="${lang === "en"}">EN</button>
+    </div>`;
+
   const LOGOS = {
     hr: { src: "assets/logo-winner-hr.jpg", alt: "Winner HR International Co.,Ltd", home: "internship.html" },
     w96: { src: "assets/logo-winner96.jpg", alt: "Winner 96 Management Manpower Co.,Ltd", home: "job.html" }
@@ -77,10 +133,7 @@
         ? `<a href="job-country.html?c=${c.slug}" class="${current === c.slug ? "current" : ""}"><img class="flag" src="${flagUrl(c.flag, 40)}" alt="">${c.nameTh} <span style="color:var(--muted);font-size:12px">(${c.nameEn})</span></a>`
         : `<span class="disabled"><img class="flag" src="${flagUrl(c.flag, 40)}" alt="" style="opacity:.5">${c.nameTh} — เร็วๆ นี้</span>`
     ).join("");
-    const onEmp = pageFile.startsWith("employers");
-    return `<div class="dd-label">เลือกประเทศ</div>${items}<hr><a href="job.html">ดูทุกประเทศ</a>
-      <hr><div class="dd-label">For Employers</div>
-      <a href="employers.html" class="${onEmp ? "current" : ""}">${ICONS.briefcase.replace("<svg", '<svg class="flag" style="padding:2px;color:var(--navy)"')}สำหรับนายจ้าง <span style="color:var(--muted);font-size:12px">(Employers)</span></a>`;
+    return `<div class="dd-label">เลือกประเทศ</div>${items}<hr><a href="job.html">ดูทุกประเทศ</a>`;
   }
 
   const searchForm = (cls) => `
@@ -103,9 +156,10 @@
           <div class="dropdown-menu">${countryLinks()}</div>
         </div>
         <a href="about.html" class="${page === "about" ? "active" : ""}">ABOUT US</a>
+        <a href="employers.html" class="nav-emp ${page === "employers" ? "active" : ""}"><span class="nav-emp-ic">${ICONS.briefcase}</span>EMPLOYERS</a>
         ${searchForm("search-mobile")}
       </nav>
-      ${searchForm("")}
+      <div class="header-tools">${langSwitch}${searchForm("")}</div>
       <button class="nav-toggle" aria-label="เปิดเมนู" aria-controls="main-nav" aria-expanded="false">${ICONS.menu}</button>
     </div>
   </header>`;
@@ -121,7 +175,19 @@
       { value: "W-12", label: "Organization · วันที่ 20260604" }
     ]
   };
-  const applyHref = page === "job" && document.getElementById("country-page") ? "#apply" : "job.html#country-grid";
+  /* หน้านายจ้าง (ภาษาอังกฤษ) ใช้ข้อความใบอนุญาตภาษาอังกฤษ */
+  if (page === "employers") Object.assign(LICENCE, {
+    title: "Legally licensed recruitment agency",
+    desc: "Winner 96 Management Manpower Co., Ltd. holds a license for the recruitment of personnel for overseas employment. You may verify the company's details before deciding to apply for a job.",
+    link: "Post your job requirements →",
+    items: [
+      { value: "Tor 1299/2568", label: "License holder for overseas employment service" },
+      LICENCE.items[1],
+      { value: "W-12", label: "Organization · Date 20260604" }
+    ]
+  });
+  const applyHref = page === "employers" ? "#post-job"
+    : page === "job" && document.getElementById("country-page") ? "#apply" : "job.html#country-grid";
   const licenceCard = brand !== "w96" ? "" : `
   <section class="licence-section">
     <div class="container">
@@ -130,7 +196,7 @@
         <div class="licence-text">
           <h2>${LICENCE.title}</h2>
           <p>${LICENCE.desc}</p>
-          <a href="${applyHref}">สอบถาม / สมัครงานกับเรา →</a>
+          <a href="${applyHref}">${LICENCE.link || "สอบถาม / สมัครงานกับเรา →"}</a>
         </div>
         <div class="licence-items">
           ${LICENCE.items.map((i) => `<div class="licence-item"><b>${i.value}</b><span>${i.label}</span></div>`).join("")}
@@ -152,17 +218,17 @@
   const footer = `${simpleFooter ? "" : `${licenceCard}
   <section class="cta-band">
     <div class="container">
-      <h2>Winner International | เปิดประตูสู่อนาคตที่มั่นคง<br>
-      ด้วยโอกาสฝึกงานและทำงานต่างประเทศอย่างถูกต้องตามกฎหมาย<br>
-      เพราะอนาคตและความมั่นคงของเด็กไทยคือสิ่งสำคัญ</h2>
-      <p>Winner International พร้อมเป็นสะพานเชื่อมโอกาสสู่เวทีระดับสากล การันตีด้วยเครือข่ายพาร์ทเนอร์โรงแรมระดับ 4-5 ดาวในประเทศไต้หวัน พร้อมบริการจัดหางานและดูแลด้านแรงงานครบวงจร ให้ทุกก้าวสู่ต่างประเทศของคุณปลอดภัยและเติบโตอย่างมั่นคง</p>
+      <span class="cta-kicker">Partnership Beyond Service</span>
+      <h2>Your Partner in People &amp; Opportunities</h2>
+      <p>พันธมิตรที่เชื่อมโยงคน ศักยภาพ และโอกาส สู่ความสำเร็จที่เติบโตไปด้วยกัน</p>
     </div>
   </section>`}
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        ${logo ? `<img src="${logo.src}" alt="${logo.alt}">` : `<div class="footer-name">Winner HR International Co.,Ltd</div>`}
-        <p>${C.address || ""}</p>
+        ${logo ? `<img src="${logo.src}" alt="${logo.alt}">` : ""}
+        ${(brand === "hr" ? [ADDR.hr] : brand === "w96" ? [ADDR.w96] : [ADDR.hr, ADDR.w96]).filter(Boolean).map((a) => `
+          <div class="footer-addr">${logo ? "" : `<div class="footer-name">${a.company}</div>`}<p>${a.th}</p></div>`).join("")}
       </div>
       <div class="footer-col">
         <h4>Programs</h4>
@@ -173,7 +239,6 @@
       <div class="footer-col">
         <h4>Contact Us</h4>
         ${(C.phones || []).map((p) => `<a href="tel:${p.tel}">${ICONS.phone} ${p.name}: ${p.display}</a>`).join("")}
-        <a href="${C.lineUrl}" target="_blank" rel="noopener">${ICONS.chat} Line: ${C.line}</a>
         <a href="mailto:${C.email}">${ICONS.mail} ${C.email}</a>
       </div>
       <div class="footer-col">
@@ -250,12 +315,24 @@
     root.querySelectorAll(".media[data-img]:not([data-ready])").forEach((el) => {
       el.dataset.ready = "1";
       const src = el.dataset.img;
+      // Loading skeleton: แถบแสงวิ่งทับกรอบรูประหว่างโหลด → จางหายเมื่อโหลดเสร็จ (หรือไม่มีไฟล์)
+      const sk = document.createElement("span");
+      sk.className = "sk";
+      sk.setAttribute("aria-hidden", "true");
+      el.appendChild(sk);
+      el.classList.add("is-loading");
+      const done = () => {
+        el.classList.remove("is-loading");
+        setTimeout(() => sk.remove(), 450);
+      };
       const img = new Image();
       img.onload = () => {
         // ใช้ URL เต็ม: url() ที่ผ่านตัวแปร CSS จะถูกอ่านเทียบกับโฟลเดอร์ css/ ทำให้หารูปไม่เจอ
         el.style.setProperty("--img", `url("${img.src}")`);
         el.classList.add("has-img");
+        done();
       };
+      img.onerror = done;
       img.src = src;
       if (CFG.showImageHints) {
         const hint = document.createElement("span");
@@ -293,13 +370,23 @@
     const soon = e.target.closest("[data-soon]");
     if (soon) {
       e.preventDefault();
-      showToast("โปรแกรมนี้กำลังจะเปิดเร็วๆ นี้ — สอบถามเพิ่มเติมได้ที่ Line " + C.line);
+      showToast("โปรแกรมนี้กำลังจะเปิดเร็วๆ นี้ — สอบถามเพิ่มเติมได้ที่ " + (C.phones?.[0]?.display || C.email));
     }
+  });
+
+  /* ---------- ปุ่มเปลี่ยนภาษา ---------- */
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".lang-switch button");
+    if (b) setLang(b.dataset.lang);
   });
 
   document.addEventListener("DOMContentLoaded", () => {
     initIcons();
+    applyLangImages();
     initMedia();
     initReveal();
   });
+
+  // เลือก EN ไว้ → แปลทันที (ข้อความที่สคริปต์สร้างทีหลังจะถูกแปลอัตโนมัติ)
+  if (lang === "en") window.WINNER_I18N?.apply("en");
 })();
